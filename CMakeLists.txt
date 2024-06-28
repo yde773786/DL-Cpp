@@ -14,11 +14,11 @@ include_directories(models units units/autodiff)
 set(SOURCES
     models/model.hpp
     models/perceptron.cpp
-    models/run_experiment.cpp
     units/activation.hpp
     units/loss.hpp
     units/units.cpp
     units/units.hpp
+    loader/run_experiment.cpp
 )
 
 # Add the executable
