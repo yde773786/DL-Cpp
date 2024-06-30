@@ -42,3 +42,4 @@ class FeatureDataLoader : public DataLoader<float> {
         vector<pair<vector<float>, vector<int>>> get_train_data(int batch_size) override;
         vector<pair<vector<float>, vector<int>>> get_val_data(int batch_size) override;
 };
+

@@ -54,12 +54,30 @@ vector<pair<vector<float>, vector<int>>> FeatureDataLoader::get_val_data(int bat
     return val_data;
 }
 
-Model* get_model_from_config(Config& cfg, string model_type, string vectorization){
-    return new Model(ReLU, squared_error);
+Model* get_model_from_config(Setting& cfg, string model_type, string vectorization, int input_size){
+    if(model_type == "perceptron"){
+        string activation_function, loss_function;
+
+        cfg.lookupValue("activation", activation_function);
+        cfg.lookupValue("loss", loss_function);
+        return new Perceptron(ACTIVATION_FUNCTIONS[activation_function], LOSS_FUNCTIONS[loss_function], input_size);
+    }
+    else{
+        return NULL;
+    }
 }
 
-DataLoaderBase* get_data_loader_from_config(Config& cfg, string dataset_type){
-    return new DataLoaderBase();
+DataLoaderBase* get_data_loader_from_config(Setting& cfg, string dataset_type){
+    if(dataset_type == "feature"){
+        string label_path, data_path;
+
+        cfg.lookupValue("label_path", label_path);
+        cfg.lookupValue("data_path", data_path);
+        return new FeatureDataLoader(label_path, data_path);
+    }
+    else{
+        return NULL;
+    }
 }
 
 int main(int argc, char **argv){
@@ -101,8 +119,19 @@ int main(int argc, char **argv){
         vectorization = cfg.lookup("vectorization").c_str();
         dataset_type = cfg.lookup("dataset_type").c_str();
 
-        Model* model = get_model_from_config(cfg, model_type, vectorization);
-        DataLoaderBase* data_loader = get_data_loader_from_config(cfg, dataset_type);
+        DataLoaderBase* data_loader = get_data_loader_from_config(cfg.getRoot()["dataset"], dataset_type);
+
+        if(!data_loader){
+            cerr << "Data loader not found" << endl;
+            return EXIT_FAILURE;
+        }
+
+        Model* model = get_model_from_config(cfg.getRoot()["model_hyperparameters"], model_type, vectorization, data_loader->label_to_value.size());
+
+        if(!model){
+            cerr << "Model not found" << endl;
+            return EXIT_FAILURE;
+        }
     }
     catch(const SettingNotFoundException &nfex)
     {
