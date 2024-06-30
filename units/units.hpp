@@ -32,3 +32,10 @@ class Segment{
 
         void forward();
 };
+
+// Loss functions
+double squared_error(vector<neuron> n1, vector<neuron> n2);
+
+// Activation functions
+double sigmoid(double x);
+double ReLU(double x);

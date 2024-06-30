@@ -1,11 +1,12 @@
 #include <cmath>
+#include "units.hpp"
 
 using namespace std;
 
-inline double ReLU(double x){
+double ReLU(double x){
     return x > 0 ? x : 0;
 }
 
-inline double sigmoid(double x){
+double sigmoid(double x){
     return 1 / (1 + exp(-x));
 }
