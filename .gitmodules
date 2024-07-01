@@ -1,0 +1,3 @@
+[submodule "macro-logger"]
+	path = macro-logger
+	url = git@github.com:dmcrodrigues/macro-logger.git
