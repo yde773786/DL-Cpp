@@ -1,5 +1,6 @@
 #include <iostream>
 #include <libconfig.h++>
+#include <macrologger.h>
 #include <fstream>
 #include "../models/model.hpp"
 #include "data_loader.hpp"
