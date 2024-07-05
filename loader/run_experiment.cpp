@@ -43,8 +43,15 @@ FeatureDataLoader::FeatureDataLoader(string& label_path, string& data_path) : Da
     }
 }
 
-vector<pair<vector<float>, vector<int>>> FeatureDataLoader::get_test_data(int batch_size){
-    return test_data;
+pair<vector<float>, vector<int>> FeatureDataLoader::get_test_data(){
+
+    if(data.empty()){
+        return {vector<float>(), vector<int>()};
+    }
+
+    auto popped = data.back();
+    data.pop_back();
+    return popped;
 }
 
 vector<pair<vector<float>, vector<int>>> FeatureDataLoader::get_train_data(int batch_size){
@@ -112,6 +119,9 @@ int main(int argc, char **argv){
     }
 
     string model_type, vectorization, dataset_type;
+    string weights_path = "";
+    DataLoaderBase* data_loader;
+    Model* model;
 
     // Get the configurations
     try
@@ -120,23 +130,66 @@ int main(int argc, char **argv){
         vectorization = cfg.lookup("vectorization").c_str();
         dataset_type = cfg.lookup("dataset_type").c_str();
 
-        DataLoaderBase* data_loader = get_data_loader_from_config(cfg.getRoot()["dataset"], dataset_type);
+       data_loader = get_data_loader_from_config(cfg.getRoot()["dataset"], dataset_type);
 
         if(!data_loader){
             cerr << "Data loader not found" << endl;
             return EXIT_FAILURE;
         }
 
-        Model* model = get_model_from_config(cfg.getRoot()["model_hyperparameters"], model_type, vectorization, data_loader->label_to_value.size());
+        model = get_model_from_config(cfg.getRoot()["model_hyperparameters"], model_type, vectorization, data_loader->label_to_value.size());
 
         if(!model){
             cerr << "Model not found" << endl;
             return EXIT_FAILURE;
         }
+
+        bool is_pre_trained;
+        cfg.getRoot()["test"].lookupValue("is_pre_trained", is_pre_trained);
+        if(is_pre_trained){
+            cfg.getRoot()["test"].lookupValue("weights_path", weights_path);
+        }
     }
     catch(const SettingNotFoundException &nfex)
     {
         cerr <<  "setting in configuration file." << endl;
+    }
+
+    if(weights_path == ""){
+        // Train the model if not pre-trained
+    }  
+    else{
+        // Load the weights
+        model->load_weights(weights_path);
+    }
+
+    // Test the model
+    if(dataset_type == "feature"){
+        FeatureDataLoader* feature_data_loader = (FeatureDataLoader*) data_loader;
+
+        while(true){
+            auto test_data = feature_data_loader->get_test_data();
+
+            // Break if no more data
+            if(test_data.first.empty()){
+                break;
+            }
+
+            for(int i = 0; i < test_data.first.size(); i++){
+                model->input[i].activation = test_data.first[i];
+            }
+
+            model->forward();
+
+            vector<neuron> target;
+            for(int i = 0; i < test_data.second.size(); i++){
+                neuron new_neuron;
+                new_neuron.activation = test_data.second[i];
+                target.push_back(new_neuron);
+            }
+
+            model->loss_and_predict(target);
+        }
     }
 
     return 0;

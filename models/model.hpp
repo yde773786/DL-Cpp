@@ -25,14 +25,18 @@ public:
         cout << "Predicted value: " << max << endl;
         cout << "Loss value" << loss(output, target) << endl;
     }
+
+    virtual void forward() = 0;
+    virtual void load_weights(string weights_path) = 0;
 };
 
 class Perceptron : public Model
 {
     public:
     
-        neuron middle;
+        Segment s1;
 
         Perceptron(activation_function activation, loss_function loss, int input_size);
-        void forward();
+        void forward() override;
+        void load_weights(string weights_path) override;
 };
