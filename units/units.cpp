@@ -22,13 +22,13 @@ Segment::Segment(vector<neuron> &n1, vector<neuron> &n2, activation_function act
     this->activation = activation;
 }
 
-// Forward pass N_2 = W^T * N_1
+// Forward pass N_2 = act(W^T * N_1)
 void Segment::forward(){
     for(int j = 0; j < n2.size(); j++){
         double sum = 0;
         for(int i = 0; i < n1.size(); i++){
             sum += n1[i].activation * weights[i][j].value + bias[j].value;
         }
-        n2[j].activation = sum;
+        n2[j].activation = activation(sum);
     }
 }
