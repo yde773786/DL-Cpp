@@ -1,0 +1,103 @@
+from ast import mod
+import torch
+from torch.utils.data import Dataset
+from torch.utils.data.dataloader import DataLoader
+from torch.utils.data.sampler import SequentialSampler
+import torch.optim as optim
+import argparse
+import dataset
+
+TYPES = {
+    'two_gaussians': dataset.classify_two_gauss_data,
+    'spiral': dataset.classify_spiral_data,
+    'circle': dataset.classify_circle_data,
+    'xor': dataset.classify_xor_data
+}
+
+ACTIVATION = {
+    'relu': torch.nn.ReLU(),
+    'tanh': torch.nn.Tanh(),
+    'sigmoid': torch.nn.Sigmoid()
+}
+
+LOSS = {
+    'mse': torch.nn.MSELoss(),
+    'cross_entropy': torch.nn.CrossEntropyLoss()
+}
+
+NUM_SAMPLES = 500
+
+class PointsDataset(Dataset):
+
+    def __init__(self, type) -> None:
+        super().__init__()
+        self.data = TYPES[type](NUM_SAMPLES)
+
+    def __len__(self):
+        return len(self.data)
+    
+    def __getitem__(self, index):
+        req_data = self.data[index]
+        return (req_data[0], req_data[1]), req_data[2]
+    
+
+class Model(torch.nn.Module):
+
+    def __init__(self, nn_sizes, activation) -> None:
+        super().__init__()
+        modules = []
+
+        for i in range(len(nn_sizes) - 2):
+            modules.append(torch.nn.Linear(nn_sizes[i], nn_sizes[i + 1]))
+            modules.append(ACTIVATION[activation])
+
+        modules.append(torch.nn.Linear(nn_sizes[-2], nn_sizes[-1]))
+        modules.append(ACTIVATION['tanh'])
+        
+        self.model = torch.nn.Sequential(*modules)
+
+    def forward(self, x):
+        return self.model(x)
+    
+def train(model, data_loader, batch_size, epochs, lr, loss):
+    loss_fn = LOSS[loss]
+    optimizer = optim.SGD(model.parameters(), lr=lr)
+    ...
+
+def test(model, data_loader, batch_size, loss):
+    loss_fn = LOSS[loss]
+    ...
+
+
+if __name__ == '__main__':
+    
+    print('Playground')
+
+    parser = argparse.ArgumentParser(description='Playground')
+    parser.add_argument('--type', type=str, default='two_gaussians', help='Type of dataset')
+    parser.add_argument('--h_sizes', type=int, nargs='+', default=[2, 4, 1], help='Hidden layers sizes')
+    parser.add_argument('--activation', type=str, default='relu', help='Activation function')
+    parser.add_argument('--batch_size', type=int, default=32, help='Batch size')
+    parser.add_argument('--epochs', type=int, default=100, help='Number of epochs')
+    parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
+    parser.add_argument('--loss', type=str, default='mse', help='Loss function')
+    parser.add_argument('--split', type=float, default=0.8, help='Train:test split ratio (x:(1-x))')
+
+    args = parser.parse_args()
+    dataset = PointsDataset(args.type)
+    
+    indices = list(range(len(dataset)))
+    split = int(args.split * len(dataset))
+    train_indices = indices[:split]
+    test_indices = indices[split:]
+
+    train_sampler = SequentialSampler(train_indices)
+    test_sampler = SequentialSampler(test_indices)
+
+    train_loader = DataLoader(dataset, batch_size=args.batch_size, sampler=train_sampler)
+    test_loader = DataLoader(dataset, batch_size=args.batch_size, sampler=test_sampler)
+
+    model = Model(args.h_sizes, args.activation)
+
+    train(model, train_loader, args.batch_size, args.epochs, args.lr, args.loss)
+    test(model, test_loader, args.batch_size, args.loss)

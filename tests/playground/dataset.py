@@ -16,7 +16,7 @@ def classify_two_gauss_data(num_samples):
     data = []
 
     def generate_gauss(mean, variance, label):
-        for i in range(num_samples / 2):
+        for _ in range(num_samples / 2):
             x = random.gauss(mean, variance)
             y = random.gauss(mean, variance)
             data.append([x, y, label])
