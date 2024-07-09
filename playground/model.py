@@ -59,14 +59,39 @@ class Model(torch.nn.Module):
     def forward(self, x):
         return self.model(x)
     
-def train(model, data_loader, batch_size, epochs, lr, loss):
+def train(model, data_loader, epochs, lr, loss):
     loss_fn = LOSS[loss]
     optimizer = optim.SGD(model.parameters(), lr=lr)
-    ...
+    
+    for epoch in range(epochs):
+        for i, data in enumerate(data_loader):
+            inputs, labels = data
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = loss_fn(outputs, labels)
 
-def test(model, data_loader, batch_size, loss):
+            loss.backward()
+            optimizer.step()
+
+            print(f'Epoch {epoch}, Batch {i}, Loss: {loss.item()}')
+
+def test(model, data_loader, loss):
     loss_fn = LOSS[loss]
-    ...
+    total = 0
+    correct = 0
+
+    for data in data_loader:
+        inputs, labels = data
+        outputs = model(inputs)
+        loss = loss_fn(outputs, labels)
+
+        total += labels.size(0)
+        _, predicted = torch.max(outputs.data, 1)
+        correct += (predicted == labels).sum().item()
+
+        print(f'Loss: {loss.item()}')
+
+    print(f'Accuracy: {correct / total}')
 
 
 if __name__ == '__main__':
@@ -95,9 +120,9 @@ if __name__ == '__main__':
     test_sampler = SequentialSampler(test_indices)
 
     train_loader = DataLoader(dataset, batch_size=args.batch_size, sampler=train_sampler)
-    test_loader = DataLoader(dataset, batch_size=args.batch_size, sampler=test_sampler)
+    test_loader = DataLoader(dataset, sampler=test_sampler)
 
     model = Model(args.h_sizes, args.activation)
 
-    train(model, train_loader, args.batch_size, args.epochs, args.lr, args.loss)
-    test(model, test_loader, args.batch_size, args.loss)
+    train(model, train_loader, args.epochs, args.lr, args.loss)
+    test(model, test_loader, args.loss)
