@@ -1,17 +1,16 @@
-from ast import mod
 import torch
 from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.sampler import SequentialSampler
 import torch.optim as optim
 import argparse
-import dataset
+import csv
 
 TYPES = {
-    'two_gaussians': dataset.classify_two_gauss_data,
-    'spiral': dataset.classify_spiral_data,
-    'circle': dataset.classify_circle_data,
-    'xor': dataset.classify_xor_data
+    'two_gaussians': 'two_gaussians_dataset.csv',
+    'spiral': 'spiral_dataset.csv',
+    'circle': 'circle_dataset.csv',
+    'xor': 'xor_dataset.csv'
 }
 
 ACTIVATION = {
@@ -31,14 +30,21 @@ class PointsDataset(Dataset):
 
     def __init__(self, type) -> None:
         super().__init__()
-        self.data = TYPES[type](NUM_SAMPLES)
+        self.data = []
+        self.labels = []
+        with open(f'./{TYPES[type]}', mode='r') as file:
+            reader = csv.reader(file)
+            for i, row in enumerate(reader):
+                if i == 0:
+                    continue
+                self.data.append(torch.tensor([float(row[0]), float(row[1])], dtype=torch.float32))
+                self.labels.append(int(row[2]))
 
     def __len__(self):
         return len(self.data)
     
     def __getitem__(self, index):
-        req_data = self.data[index]
-        return (req_data[0], req_data[1]), req_data[2]
+        return self.data[index], self.labels[index]
     
 
 class Model(torch.nn.Module):

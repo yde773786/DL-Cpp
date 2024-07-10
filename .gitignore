@@ -7,3 +7,7 @@ CMakeFiles/
 build/
 Makefile
 dl_cpp
+
+# Playground output
+playground/*.csv
+playground/__pycache__/
