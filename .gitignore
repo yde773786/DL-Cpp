@@ -9,5 +9,5 @@ Makefile
 dl_cpp
 
 # Playground output
-playground/dataset.csv
+playground/*.csv
 playground/__pycache__/
