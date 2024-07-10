@@ -16,7 +16,7 @@ def classify_two_gauss_data(num_samples):
     data = []
 
     def generate_gauss(mean, variance, label):
-        for _ in range(num_samples / 2):
+        for _ in range(num_samples // 2):
             x = random.gauss(mean, variance)
             y = random.gauss(mean, variance)
             data.append([x, y, label])
@@ -32,7 +32,7 @@ def classify_spiral_data(num_samples):
     data = []
 
     def generate_spiral(deltaT, label):
-        for i in range(num_samples / 2):
+        for i in range(num_samples // 2):
             r = i / num_samples * 5
             t = 1.75 * i / num_samples * 2 * math.pi + deltaT
             x = r * math.sin(t)
@@ -58,7 +58,7 @@ def classify_circle_data(num_samples):
         
         return 1 if dx ** 2 + dy ** 2 < (radius * 0.5) ** 2 else -1
     
-    for i in range(num_samples / 2):
+    for i in range(num_samples // 2):
         r = random.uniform(0, radius * 0.5)
         angle = random.uniform(0, 2 * math.pi)
         x = r * math.sin(angle)
