@@ -3,8 +3,7 @@ import csv
 import argparse
 import dataset
 import random
-import matplotlib.pyplot as plt
-import numpy as np
+import plot_data
 
 TYPES = {
     'two_gaussians': dataset.classify_two_gauss_data,
@@ -38,33 +37,9 @@ if __name__ == '__main__':
         random.shuffle(data)
 
         for row in data:
-            row = [round(row[0], 3), round(row[1], 3), row[2]]
             writer.writerow(row)
-            if row[2] == 1:
-                blue.append(row)
-            else:
-                orange.append(row)
 
-        colored_data = [blue, orange]
-        
-
-        if args.plot:
-            colors = ['blue', 'orange']
-
-            xlims = plt.xlim()
-            ylims = plt.ylim()
-
-            x_min, x_max = -6, 6
-            y_min, y_max = -6, 6
-
-            xx, yy = np.meshgrid(np.arange(x_min, y_max, 0.2), np.arange(y_min, y_max, 0.2))
-            fig, ax = plt.subplots()
-            plt.tight_layout()
-            ax.contourf(xx, yy, np.array([[1 if np.random.rand() > 0.5 else -1 for _ in range(len(xx[0]))] for _ in range(len(xx))]), alpha=0.5, colors=['#ADD8E6', '#FFA07A'])
-
-            for i in range(2):
-                ax.scatter([row[0] for row in colored_data[i]], [row[1] for row in colored_data[i]], color=colors[i])
-
-            plt.show()
+    if args.plot:   
+        plot_data.plot_data(OUTPUT)
 
         
