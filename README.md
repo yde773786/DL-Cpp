@@ -7,7 +7,7 @@ Popular Neural Network models implemented in C++
 - Modularize the creation of models to enable more designing (through `cfg`) then programming.
 - Self-learning and Experimentation on model architectures, scalar and vectorized code (scalar vs `CUDA` vs `SIMD intrinsics`) performance comparison, autodiff etc.
 
-We use ['Playground']('https://github.com/yde773786/DL-Cpp/tree/playground') for evaluation of correctness and performance.
+We use [Playground](https://github.com/yde773786/DL-Cpp/tree/main/playground) for evaluation of correctness and performance.
 
 ## Create a dataset
 
