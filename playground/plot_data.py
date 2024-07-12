@@ -41,8 +41,17 @@ def plot_data(file_str, function=None):
             np.arange(y_min, y_max, 0.2)
         )
 
-        Z = function(xx, yy)
-        ax.contourf(xx, yy, Z, alpha=0.5)
+        Z = np.zeros(xx.shape)
+        for i in range(xx.shape[0]):
+            for j in range(xx.shape[1]):
+                Z[i, j] = function(xx[i, j], yy[i, j])
+
+        # light blue
+        bl = np.array([0.7, 0.7, 1])
+        # light orange
+        orng = np.array([1, 0.8, 0.8])
+
+        ax.contourf(xx, yy, Z, alpha=0.5, colors=[orng, bl])
 
     for i in range(2):
         ax.scatter([row[0] for row in colored_data[i]], [row[1] for row in colored_data[i]], color=colors[i])

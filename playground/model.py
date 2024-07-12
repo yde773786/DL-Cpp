@@ -4,6 +4,7 @@ from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.sampler import SequentialSampler
 import torch.optim as optim
+import plot_data
 import matplotlib.pyplot as plt
 import argparse
 import csv
@@ -28,6 +29,7 @@ LOSS = {
 }
 
 NUM_SAMPLES = 500
+model = None
 
 class PointsDataset(Dataset):
 
@@ -123,6 +125,11 @@ def test(model, data_loader, loss_func, plot_loss):
         plt.title('Training Loss')
         plt.show()
 
+def plot_Z_func(x_i, y_i):
+    assert model is not None, 'Model is not defined'
+    predicted = 1 if model(torch.tensor([x_i, y_i], dtype=torch.float32)).item() > 0 else -1
+
+    return predicted
 
 if __name__ == '__main__':
     
@@ -135,6 +142,7 @@ if __name__ == '__main__':
     parser.add_argument('--activation', type=str, default='relu', help='Activation function')
     parser.add_argument('--batch-size', type=int, default=32, help='Batch size')
     parser.add_argument('--plot-loss', help='Plot loss', action='store_true')
+    parser.add_argument('--plot-data', help='Plot data', action='store_true')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs')
     parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
     parser.add_argument('--loss', type=str, default='mse', help='Loss function')
@@ -156,5 +164,11 @@ if __name__ == '__main__':
 
     model = Model(args.layer_sizes, args.activation)
 
+    if args.plot_data:
+        plot_data.plot_data(f'./{TYPES[args.type]}', plot_Z_func)
+
     train(model, train_loader, args.epochs, args.lr, args.loss, args.plot_loss)
     test(model, test_loader, args.loss, args.plot_loss)
+
+    if args.plot_data:
+        plot_data.plot_data(f'./{TYPES[args.type]}', plot_Z_func)
