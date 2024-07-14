@@ -1,4 +1,5 @@
 from re import A
+import numpy as np
 import torch
 from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
@@ -144,6 +145,8 @@ if __name__ == '__main__':
     parser.add_argument('--plot-loss', help='Plot loss', action='store_true')
     parser.add_argument('--plot-data', help='Plot data', action='store_true')
     parser.add_argument('--epochs', type=int, default=100, help='Number of epochs')
+    parser.add_argument('--use-pretrained', type=str, help='Use pretrained weights')
+    parser.add_argument('--save-weight', help='Save model weights, cross compatible with DL-CPP', action='store_true')
     parser.add_argument('--lr', type=float, default=0.01, help='Learning rate')
     parser.add_argument('--loss', type=str, default='mse', help='Loss function')
     parser.add_argument('--split', type=float, default=0.8, help='Train:test split ratio (x:(1-x))')
@@ -167,8 +170,42 @@ if __name__ == '__main__':
     if args.plot_data:
         plot_data.plot_data(f'./{TYPES[args.type]}', plot_Z_func)
 
-    train(model, train_loader, args.epochs, args.lr, args.loss, args.plot_loss)
+    if args.use_pretrained:
+        load_arr = np.fromfile(args.use_pretrained)
+
+        print(load_arr)
+        shape, old_shape = 0, 0
+        
+        for param_tensor in model.state_dict():
+            state, val = param_tensor, model.state_dict()[param_tensor]
+            print(f'Loading State: {state}')
+
+            # Get dimensions of the tensor as tuple
+            shape = tuple(val.shape)
+
+            # Load the weights and biases into the model
+            model.state_dict()[param_tensor].copy_(torch.tensor(load_arr[old_shape:old_shape + np.prod(shape)]).view(shape))
+            old_shape = old_shape + np.prod(shape) 
+
+            print(model.state_dict()[param_tensor])
+    else:
+        train(model, train_loader, args.epochs, args.lr, args.loss, args.plot_loss)
+
     test(model, test_loader, args.loss, args.plot_loss)
 
     if args.plot_data:
         plot_data.plot_data(f'./{TYPES[args.type]}', plot_Z_func)
+
+    if args.save_weight:
+        save_arr = np.array([])
+        save_file = open(f'wts_{args.type}_{args.layer_sizes}.wt', 'wb')
+
+        for param_tensor in model.state_dict():
+            state, val = param_tensor, model.state_dict()[param_tensor]
+            print(f'Saving State: {state}')
+            print(model.state_dict()[param_tensor])
+            save_arr = np.append(save_arr, val.data.numpy().flatten())
+            
+        save_arr.tofile(save_file)
+
+        

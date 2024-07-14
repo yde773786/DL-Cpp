@@ -11,3 +11,4 @@ dl_cpp
 # Playground output
 playground/*.csv
 playground/__pycache__/
+playground/*.wt
