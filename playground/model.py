@@ -186,8 +186,7 @@ if __name__ == '__main__':
             # Load the weights and biases into the model
             model.state_dict()[param_tensor].copy_(torch.tensor(load_arr[old_shape:old_shape + np.prod(shape)]).view(shape))
             old_shape = old_shape + np.prod(shape) 
-
-            print(model.state_dict()[param_tensor])
+            
     else:
         train(model, train_loader, args.epochs, args.lr, args.loss, args.plot_loss)
 
@@ -198,12 +197,13 @@ if __name__ == '__main__':
 
     if args.save_weight:
         save_arr = np.array([])
-        save_file = open(f'wts_{args.type}_{args.layer_sizes}.wt', 'wb')
+        layer_sizes_str = '-'.join([str(i) for i in args.layer_sizes])
+        save_file = open(f'wts_{args.type}_{layer_sizes_str}.wt', 'wb')
 
         for param_tensor in model.state_dict():
             state, val = param_tensor, model.state_dict()[param_tensor]
             print(f'Saving State: {state}')
-            print(model.state_dict()[param_tensor])
+
             save_arr = np.append(save_arr, val.data.numpy().flatten())
             
         save_arr.tofile(save_file)

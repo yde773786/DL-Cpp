@@ -25,6 +25,7 @@ set(SOURCES
     units/activation.cpp
     units/loss.cpp
     loader/data_loader.hpp
+    loader/data_loader.cpp
     loader/run_experiment.cpp
 )
 

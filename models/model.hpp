@@ -9,10 +9,9 @@ public:
     vector<neuron> input;
     vector<neuron> output;
 
-    activation_function activation;
     loss_function loss;
 
-    Model(activation_function activation, loss_function loss) : activation(activation), loss(loss) {};
+    Model(loss_function loss) : loss(loss) {};
     
     void loss_and_predict(vector<neuron> target){
         int max = 0;
@@ -34,9 +33,9 @@ class Perceptron : public Model
 {
     public:
     
-        Segment s1;
-
         Perceptron(activation_function activation, loss_function loss, int input_size);
         void forward() override;
         void load_weights(string weights_path) override;
+
+        Segment* s1;
 };

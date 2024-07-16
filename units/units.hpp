@@ -33,8 +33,8 @@ class Segment{
 
     public:
 
-        vector<neuron> n1; // First layer of neurons
-        vector<neuron> n2; // Second layer of neurons
+        vector<neuron> &n1; // First layer of neurons
+        vector<neuron> &n2; // Second layer of neurons
 
         vector<weight> bias; // Bias for each neuron in the second layer
         vector<vector<weight>> weights; // Weights between the two layers
