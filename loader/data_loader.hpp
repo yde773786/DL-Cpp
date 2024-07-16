@@ -5,41 +5,45 @@
 
 using namespace std;
 
-// A wrapper class for data loaders, for readability when data loading
-class DataLoaderBase {
+// This is a base class for all Datasets
+template <typename T, typename U>
+class Dataset{
     public:
-        unordered_map<string, float> label_to_value;
-        unordered_map<float, string> value_to_label;
-
-        DataLoaderBase() = default;
+        int length;
+        vector<pair<T, U>> data_to_label;
+        virtual pair<T, U> get_data(int index) = 0;
 };
 
-template <typename T>
-class DataLoader : public DataLoaderBase{
+// Define your custom dataset here
+
+class PlaygroundDataset : public Dataset<pair<float, float>, int>{
 
     public:
-        DataLoader(string& label_path);
-
-        vector<pair<vector<T>, vector<int>>>  data;
-
-        // Pair of data vector and label vector
-        vector<pair<vector<T>, vector<int>>> test_data;
-        vector<pair<vector<T>, vector<int>>> train_data;
-        vector<pair<vector<T>, vector<int>>> val_data;
-
-
-        // Returns a batch of pairs of data vector and label vector. Each getter is without replacement.
-        virtual pair<vector<T>, vector<int>> get_test_data() = 0;
-        virtual vector<pair<vector<T>, vector<int>>> get_train_data(int batch_size) = 0;
-        virtual vector<pair<vector<T>, vector<int>>> get_val_data(int batch_size) = 0;
+        PlaygroundDataset(string& data_path);
+        pair<pair<float, float>, int> get_data(int index) override;
 };
 
-class FeatureDataLoader : public DataLoader<float> {
+// This is a base class for all DataLoaders. Serves as a wrapper for the Dataset class
+class DataLoaderBase{
     public:
-        FeatureDataLoader(string& label_path, string& data_path);
-
-        pair<vector<float>, vector<int>> get_test_data() override;
-        vector<pair<vector<float>, vector<int>>> get_train_data(int batch_size) override;
-        vector<pair<vector<float>, vector<int>>> get_val_data(int batch_size) override;
+        int batch_size;
 };
 
+// This is a base class for all DataLoaders
+
+template <typename T, typename U>
+class DataLoader: public DataLoaderBase{
+    public:
+        vector<int> indices;
+        Dataset<T, U>* dataset;
+
+        virtual vector<pair<T,U>> get_batch(int index) = 0;
+};
+
+// Define your custom DataLoader here
+
+class PlaygroundDataLoader : public DataLoader<pair<float, float>, int>{
+    public:
+        PlaygroundDataLoader(PlaygroundDataset* dataset, int batch_size, vector<int> indices);
+        vector<pair<pair<float, float>, int>> get_batch(int index) override;
+};

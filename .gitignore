@@ -12,3 +12,6 @@ dl_cpp
 playground/*.csv
 playground/__pycache__/
 playground/*.wt
+
+*debug*
+*log*
