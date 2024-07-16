@@ -13,7 +13,7 @@ public:
 
     Model(loss_function loss) : loss(loss) {};
     
-    void loss_and_predict(vector<neuron> target){
+    double get_loss(vector<neuron> target){
         int max = 0;
         for(int i = 0; i < output.size(); i++){
             if(output[i].activation > max){
@@ -21,8 +21,7 @@ public:
             }
         }
 
-        cout << "Predicted value: " << max << endl;
-        cout << "Loss value" << loss(output, target) << endl;
+        return loss(target, output);
     }
 
     virtual void forward() = 0;

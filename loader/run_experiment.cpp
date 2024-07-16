@@ -160,6 +160,9 @@ int main(int argc, char **argv){
         LOG_DEBUG("Playground dataset length: %d", test_playground_data_loader->dataset->length);
         LOG_DEBUG("Number of batches: %d", test_playground_data_loader->dataset->length - test_playground_data_loader->batch_size);
 
+        int correct = 0;
+        int total = 0;
+
         for(int i = 0; i < test_playground_data_loader->indices.size(); i++){
             auto batch = test_playground_data_loader->get_batch(i);
             for(int j = 0; j < batch.size(); j++){
@@ -171,9 +174,22 @@ int main(int argc, char **argv){
                 LOG_DEBUG("Label: %d", data.second);
                 model->forward();
                 vector<neuron> target = {{(double) data.second}};
-                model->loss_and_predict(target);
+
+                cout << "Loss: " << model->get_loss(target) << endl;
+
+                int predicted = model->output[0].activation > 0 ? 1 : -1;
+
+                LOG_DEBUG("Activation: %f", model->output[0].activation);
+                LOG_DEBUG("Predicted: %d", predicted);
+                LOG_DEBUG("Correct: %d", data.second);
+                if(predicted == data.second){
+                    correct++;
+                }
+                total++;
             }
         }
+
+        cout << "Accuracy: " << (double) correct / total << endl;
     }
 
     return 0;
