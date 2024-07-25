@@ -1,38 +1,60 @@
-#include <unordered_set>
+#include <set>
 
 using namespace std;
-
-struct PropogationFunctionHandler {
-    double (*forward)(unordered_set<Node*>);
-    double (*backward)(Node*, unordered_set<Node*>);
-};
-
-// Activation function handlers
-PropogationFunctionHandler sigmoid_handler;
-PropogationFunctionHandler ReLU_handler;
-PropogationFunctionHandler tanh_handler;
-
-// Operation function handlers
-PropogationFunctionHandler add_handler;
-PropogationFunctionHandler multiply_handler;
-
-// Loss function handlers
-PropogationFunctionHandler squared_error_handler;
 
 class Node {
     public:
         double value;
         double gradient;
-        unordered_set<Node*> parents;
-        unordered_set<Node*> children;
-        PropogationFunctionHandler propogation;
+        set<Node*> parents;
+        set<Node*> children;
 
         Node(double);
-        void add_parent(Node);
-        void add_child(Node);
+        void add_parent(Node*);
+        void add_child(Node*);
+
+        virtual void forward() = 0;
+
+        // partial derivative of the node with respect to the child. Assign the gradient to the child.
+        virtual void backward(Node* child) = 0;
+};
+
+class SigmoidNode : public Node {
+    public:
+        SigmoidNode(double value) : Node(value) {}
 
         void forward();
+        void backward(Node* child);
+};
 
-        // The backward function depends on which child is calling it
+class TanhNode : public Node {
+    public:
+        TanhNode(double value) : Node(value) {}
+
+        void forward();
+        void backward(Node* child);
+};
+
+class ReLUNode : public Node {
+    public:
+        ReLUNode(double value) : Node(value) {}
+
+        void forward();
+        void backward(Node* child);
+};
+
+class AddNode : public Node {
+    public:
+        AddNode(double value) : Node(value) {}
+
+        void forward();
+        void backward(Node* child);
+};
+
+class MulNode : public Node {
+    public:
+        MulNode(double value) : Node(value) {}
+
+        void forward();
         void backward(Node* child);
 };
