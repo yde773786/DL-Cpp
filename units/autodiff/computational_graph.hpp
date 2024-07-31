@@ -1,5 +1,6 @@
 #include "units.hpp"
 #include <unordered_set>
+#include <stack>
 
 using namespace std;
 
@@ -20,6 +21,8 @@ class ComputationalGraph {
         void backward();
 
     private:
-        set<Node*> topological_sort(direction dir);
+        // topological sort of the graph. pop from the 
+        stack<Node*> topological_sort(direction dir);
+        void topological_sort_helper(Node* node, unordered_set<Node*>& visited, stack<Node*>& sortedNodes, direction dir);
 
 };
