@@ -58,3 +58,11 @@ class MulNode : public Node {
         void forward();
         void backward(Node* child);
 };
+
+class ImmutableNode : public Node {
+    public:
+        ImmutableNode(double value) : Node(value) {}
+
+        void forward() {}
+        void backward(Node* child) {}
+};

@@ -65,3 +65,11 @@ void MulNode::forward() {
 void MulNode::backward(Node* child) {
     child->gradient += value / child->value;
 };
+
+void ImmutableNode::forward() {
+    // do nothing
+}
+
+void ImmutableNode::backward(Node* child) {
+    // do nothing
+};
