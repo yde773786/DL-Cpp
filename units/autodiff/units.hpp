@@ -63,6 +63,6 @@ class ImmutableNode : public Node {
     public:
         ImmutableNode(double value) : Node(value) {}
 
-        void forward() {}
-        void backward(Node* child) {}
+        void forward();
+        void backward(Node* child);
 };

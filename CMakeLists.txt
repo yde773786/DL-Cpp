@@ -16,6 +16,9 @@ find_library(LIBCONFIG libconfig++.so)
 # Add the macro-logger library
 add_subdirectory(macro-logger)
 
+# Add the autodiff library
+add_subdirectory(units/autodiff)
+
 # Specify the source files for the executable
 set(SOURCES
     models/model.hpp

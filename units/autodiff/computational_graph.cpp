@@ -18,6 +18,8 @@ stack<Node*> ComputationalGraph::topological_sort(direction dir) {
             topological_sort_helper(*it, visited, sortedNodes, dir);
         }
     }
+
+    return sortedNodes;
 }
 
 void ComputationalGraph::topological_sort_helper(Node* node, unordered_set<Node*>& visited, stack<Node*>& sortedNodes, direction dir) {

@@ -13,5 +13,8 @@ playground/*.csv
 playground/__pycache__/
 playground/*.wt
 
+# Autodiff output
+units/autodiff/test_autodiff
+
 *debug*
 *log*
