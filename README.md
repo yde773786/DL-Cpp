@@ -7,9 +7,9 @@ C++ lightweight library enabling the creation of Machine Learning models using c
 - [x] Support cross-compatible serialization of weights between `PyTorch` and `DL-CPP`
 - [x] Provide framework for modular creation of Deep Learning models, and ablility to represent with simple `cfg` ([`libconfig++`](https://github.com/hyperrealm/libconfig)) files.
 - [x] `Perceptron` `cfg` support pre-packaged
+- [x] Support for lightweight automatic differentiation engine. [Reverse mode autodiff library](./units/autodiff) for general usage as well as specifically backpropogation in `DL-Cpp`
 
 ## Features under progress
-- [ ] Create barebones autodiff library for `DL-CPP` backpropogation
 - [ ] Use `pybind11` to expose `Playground` to `DL-CPP` for graphing purposes
 - [ ] Support for `CUDA` and using `SIMD intrinsics` instead of scalar code for forward and backpropogation
 - [ ] pre-packaged `cfg` support for `FNN`, `CNN` and `RNN`
