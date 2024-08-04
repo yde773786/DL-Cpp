@@ -28,6 +28,8 @@ public:
     virtual void load_weights(string weights_path) = 0;
 };
 
+// Out-of-the-box models
+
 class Perceptron : public Model
 {
     public:
@@ -36,5 +38,5 @@ class Perceptron : public Model
         void forward() override;
         void load_weights(string weights_path) override;
 
-        Segment* s1;
+        FCSegment* s1;
 };

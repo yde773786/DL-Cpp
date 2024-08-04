@@ -1,9 +1,14 @@
 add_library(autodiff OBJECT
-    units.hpp
-    units.cpp
+    node.hpp
     computational_graph.hpp
     computational_graph.cpp
     tests/test_autodiff.cpp
+    loss_fns.hpp
+    loss_fns.cpp
+    operations.hpp
+    operations.cpp
+    activations.hpp
+    activations.cpp
     )
 
 add_executable(test_autodiff $<TARGET_OBJECTS:autodiff>)

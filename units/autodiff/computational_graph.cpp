@@ -61,5 +61,6 @@ void ComputationalGraph::backward() {
         for(auto it = node->children.begin(); it != node->children.end(); it++) {
             node->backward(*it);
         }
+        sortedNodes.pop();
     }
 }

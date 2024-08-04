@@ -14,7 +14,7 @@ Perceptron::Perceptron(activation_function activation, loss_function loss, int i
     }
 
     output = {{0}};
-    s1 = new Segment(input, output, activation);
+    s1 = new FCSegment(input, output, activation);
 }
 
 void Perceptron::forward(){
