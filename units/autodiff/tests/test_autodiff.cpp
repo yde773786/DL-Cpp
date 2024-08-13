@@ -1,7 +1,7 @@
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
-#include "computational_graph.hpp"
-#include "operations.hpp"
+#include "../computational_graph.hpp"
+#include "../operations.hpp"
 
 TEST_CASE( "Single Arithmetic", "[arithmetic]" ) {
     ComputationalGraph graph;

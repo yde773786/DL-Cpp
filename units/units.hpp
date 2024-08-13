@@ -9,19 +9,6 @@
 
 using namespace std;
 
-
-// Activation functions key-value pairs
-extern unordered_map<string, Node*> ACTIVATION_FUNCTIONS = {
-    {"sigmoid", new SigmoidNode(0)},
-    {"ReLU", new ReLUNode(0)},
-    {"tanh", new TanhNode(0)}
-};
-
-// Loss functions key-value pairs
-extern unordered_map<string, Node*> LOSS_FUNCTIONS = {
-    {"mse", new MSENode(0)}
-};
-
 // Represents a Fully Connected Segment between two layers of neurons
 class FCSegment{
 
@@ -36,5 +23,5 @@ class FCSegment{
         Node* activation;
         Node* loss;
 
-        FCSegment(vector<Node*> &n1, vector<Node*> &n2, Node* activation, ComputationalGraph &graph);
+        FCSegment(vector<Node*> &n1, vector<Node*> &n2, Node* activation, ComputationalGraph* graph);
 };

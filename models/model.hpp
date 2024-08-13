@@ -6,26 +6,22 @@ class Model {
 
 public:
     
-    vector<neuron> input;
-    vector<neuron> output;
+    vector<Node*> input;
+    vector<Node*> output;
+    vector<Node*> target;
 
-    loss_function loss;
+    Node* loss;
+    ComputationalGraph* graph;
 
-    Model(loss_function loss) : loss(loss) {};
+    Model(Node* loss) : loss(loss) {};
     
-    double get_loss(vector<neuron> target){
-        int max = 0;
-        for(int i = 0; i < output.size(); i++){
-            if(output[i].activation > max){
-                max = i;
-            }
-        }
-
-        return loss(target, output);
+    double get_loss(){
+        return loss->value;
     }
 
     virtual void forward() = 0;
     virtual void load_weights(string weights_path) = 0;
+    virtual void backward(vector<double> target_val) = 0;
 };
 
 // Out-of-the-box models
@@ -34,8 +30,9 @@ class Perceptron : public Model
 {
     public:
     
-        Perceptron(activation_function activation, loss_function loss, int input_size);
+        Perceptron(Node* activation, Node* loss, int input_size);
         void forward() override;
+        void backward(vector<double> target_val) override;
         void load_weights(string weights_path) override;
 
         FCSegment* s1;

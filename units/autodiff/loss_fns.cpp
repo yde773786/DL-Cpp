@@ -16,3 +16,7 @@ void MSENode::forward(){
 
     value = sum / children.size();
 }
+
+void MSENode::backward(Node* child){
+    //TODO: Implement
+}

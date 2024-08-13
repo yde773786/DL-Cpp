@@ -25,8 +25,6 @@ set(SOURCES
     models/perceptron.cpp
     units/units.cpp
     units/units.hpp
-    units/activation.cpp
-    units/loss.cpp
     loader/data_loader.hpp
     loader/data_loader.cpp
     loader/run_experiment.cpp
@@ -37,5 +35,8 @@ add_executable(dl_cpp ${SOURCES})
 
 # Link the libconfig library
 target_link_libraries(dl_cpp macro-logger ${LIBCONFIG})
+
+# Link the autodiff library
+target_link_libraries(dl_cpp autodiff)
 
 target_compile_definitions(dl_cpp PRIVATE LOG_LEVEL=$ENV{LOG_LEVEL})
