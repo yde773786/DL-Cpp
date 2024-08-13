@@ -9,6 +9,18 @@
 #include <macrologger.h>
 #endif
 
+// Activation functions key-value pairs
+unordered_map<string, Node*> ACTIVATION_FUNCTIONS = {
+    {"sigmoid", new SigmoidNode(0)},
+    {"ReLU", new ReLUNode(0)},
+    {"tanh", new TanhNode(0)}
+};
+
+// Loss functions key-value pairs
+unordered_map<string, Node*> LOSS_FUNCTIONS = {
+    {"mse", new MSENode(0)}
+};
+
 
 using namespace libconfig;
 
@@ -167,19 +179,20 @@ int main(int argc, char **argv){
             auto batch = test_playground_data_loader->get_batch(i);
             for(int j = 0; j < batch.size(); j++){
                 auto data = batch[j];
-                model->input[0].activation = data.first.first;
-                model->input[1].activation = data.first.second;
+
+                model->input[0] = new ChildlessNode(data.first.first);
+                model->input[1] = new ChildlessNode(data.first.second);
 
                 LOG_DEBUG("Data: %f, %f", data.first.first, data.first.second);
                 LOG_DEBUG("Label: %d", data.second);
                 model->forward();
-                vector<neuron> target = {{(double) data.second}};
+                vector<double> target = {(double) data.second};
 
-                cout << "Loss: " << model->get_loss(target) << endl;
+                cout << "Loss: " << model->get_loss() << endl;
 
-                int predicted = model->output[0].activation > 0 ? 1 : -1;
+                int predicted = model->output[0]->value > 0 ? 1 : -1;
 
-                LOG_DEBUG("Activation: %f", model->output[0].activation);
+                LOG_DEBUG("Activation: %f", model->output[0]->value);
                 LOG_DEBUG("Predicted: %d", predicted);
                 LOG_DEBUG("Correct: %d", data.second);
                 if(predicted == data.second){
