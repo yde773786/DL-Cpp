@@ -7,19 +7,26 @@
 #endif
 
 Perceptron::Perceptron(Node* activation, Node* loss, int input_size) : Model(loss){
-    for (int i = 0; i < input_size; i++){
-        input.push_back(new ChildlessNode(0));
-    }
 
     graph = new ComputationalGraph();
 
-    output = {new ChildlessNode(0)};
+    for (int i = 0; i < input_size; i++){
+        input.push_back(new ChildlessNode(0));
+        graph->add_node(input[i]);
+    }
+
     target = {new ChildlessNode(0)};
+
+    // Output layer is populated in FCSegment. We need to create a dummy node here
+    output = {NULL};
+
+    graph->add_node(target[0]);
+    graph->add_node(loss);
+
+    s1 = new FCSegment(input, output, activation, graph);
 
     graph->add_connection(loss, output[0]);
     graph->add_connection(loss, target[0]);
-
-    s1 = new FCSegment(input, output, activation, graph);
 }
 
 void Perceptron::forward(){

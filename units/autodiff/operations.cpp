@@ -2,6 +2,7 @@
 #include <cmath>
 
 void AddNode::forward() {
+    this->value = 0;
     for(auto it = this->children.begin(); it != this->children.end(); it++) {
         this->value += (*it)->value;
     }

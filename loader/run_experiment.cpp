@@ -34,6 +34,11 @@ Model* get_model_from_config(Setting& hyp_cfg, Setting& des_cfg,string model_typ
 
         des_cfg.lookupValue("input_size", input_size);
 
+        if(ACTIVATION_FUNCTIONS.find(activation_function) == ACTIVATION_FUNCTIONS.end() || LOSS_FUNCTIONS.find(loss_function) == LOSS_FUNCTIONS.end()){
+            cerr << "Perceptron cfg is invalid" << endl;
+            return NULL;
+        }
+
         return new Perceptron(ACTIVATION_FUNCTIONS[activation_function], LOSS_FUNCTIONS[loss_function], input_size);
     }
     else{
@@ -138,6 +143,7 @@ int main(int argc, char **argv){
         }
 
         model = get_model_from_config(cfg.getRoot()["model_hyperparameters"], cfg.getRoot()["model_design"], model_type, vectorization);
+        LOG_DEBUG("Model type: %s", model_type.c_str());
 
         if(!model){
             cerr << "Model not found" << endl;
@@ -180,13 +186,14 @@ int main(int argc, char **argv){
             for(int j = 0; j < batch.size(); j++){
                 auto data = batch[j];
 
-                model->input[0] = new ChildlessNode(data.first.first);
-                model->input[1] = new ChildlessNode(data.first.second);
+                model->input[0]->value = data.first.first;
+                model->input[1]->value = data.first.second;
 
                 LOG_DEBUG("Data: %f, %f", data.first.first, data.first.second);
                 LOG_DEBUG("Label: %d", data.second);
+
+                model->target[0]->value = data.second;
                 model->forward();
-                vector<double> target = {(double) data.second};
 
                 cout << "Loss: " << model->get_loss() << endl;
 
