@@ -49,4 +49,6 @@ cd units/autodiff/tests && cmake --build . --target clean; make; cd ../../../
 ```
 
 `Autodiff` Tests
-`./units/autodiff/tests/test_autodiff`
+```
+./units/autodiff/tests/test_autodiff
+```
