@@ -1,7 +1,6 @@
 #include <iostream>
 #include <libconfig.h++>
 #include <fstream>
-#include "../models/model.hpp"
 #include "data_loader.hpp"
 
 #ifndef MACROLOGGER_H
@@ -174,42 +173,9 @@ int main(int argc, char **argv){
     if(dataset_type == "playground"){
 
         PlaygroundDataLoader * test_playground_data_loader = (PlaygroundDataLoader*) test_data_loader;
+        double accuracy = test_playground_data_loader->test(model);
 
-        LOG_DEBUG("Playground dataset length: %d", test_playground_data_loader->dataset->length);
-        LOG_DEBUG("Number of batches: %d", test_playground_data_loader->dataset->length - test_playground_data_loader->batch_size);
-
-        int correct = 0;
-        int total = 0;
-
-        for(int i = 0; i < test_playground_data_loader->indices.size(); i++){
-            auto batch = test_playground_data_loader->get_batch(i);
-            for(int j = 0; j < batch.size(); j++){
-                auto data = batch[j];
-
-                model->input[0]->value = data.first.first;
-                model->input[1]->value = data.first.second;
-
-                LOG_DEBUG("Data: %f, %f", data.first.first, data.first.second);
-                LOG_DEBUG("Label: %d", data.second);
-
-                model->target[0]->value = data.second;
-                model->forward();
-
-                cout << "Loss: " << model->get_loss() << endl;
-
-                int predicted = model->output[0]->value > 0 ? 1 : -1;
-
-                LOG_DEBUG("Activation: %f", model->output[0]->value);
-                LOG_DEBUG("Predicted: %d", predicted);
-                LOG_DEBUG("Correct: %d", data.second);
-                if(predicted == data.second){
-                    correct++;
-                }
-                total++;
-            }
-        }
-
-        cout << "Accuracy: " << (double) correct / total << endl;
+        cout << "Accuracy: " << accuracy << endl;
     }
 
     return 0;

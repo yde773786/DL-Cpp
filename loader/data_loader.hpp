@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "../models/model.hpp"
 #include <utility>
 
 using namespace std;
@@ -38,6 +39,7 @@ class DataLoader: public DataLoaderBase{
         Dataset<T, U>* dataset;
 
         virtual vector<pair<T,U>> get_batch(int index) = 0;
+        virtual double test(Model* model) = 0;
 };
 
 // Define your custom DataLoader here
@@ -46,4 +48,5 @@ class PlaygroundDataLoader : public DataLoader<pair<float, float>, int>{
     public:
         PlaygroundDataLoader(PlaygroundDataset* dataset, int batch_size, vector<int> indices);
         vector<pair<pair<float, float>, int>> get_batch(int index) override;
+        double test(Model* model) override;
 };

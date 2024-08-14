@@ -14,52 +14,39 @@ C++ lightweight library enabling the creation of Machine Learning models using c
 - [ ] Support for `CUDA` and using `SIMD intrinsics` instead of scalar code for forward and backpropogation
 - [ ] pre-packaged `cfg` support for `FNN`, `CNN` and `RNN`
 
+## Get Started
 
+The major working parts that need to be puzzled together to design and create a model and test/train workflow using `DL-CPP` are as listed:
 
-## Create a dataset
+- `Model`: The architecture of the model created. The template.
+- `Dataset`: Wrapper for raw data
+- `DataLoader`: Wrapper for obtaining train/test batches or "loading" from `dataset`
+- `Config`: Design the parameters required and how they are read. This needs to be provided when creating a `model`
 
-### Command
+### Example Design
+`Perceptron` workflow using `Playground`
 
-`python3 create_dlcpp_dataset.py [-h] [--type TYPE] [--plot]`
+- `Model`: `Perceptron`
+- `Dataset`: `PlaygroundDataset`
+- `DataLoader`: `PlaygroundDataLoader`
+- `Config`: [CFG](/config/perceptron/perceptron_scalar.cfg)
 
-### Example
+### Build
+`DL-CPP`
 ```
-python3 create_dlcpp_dataset.py --plot --type xor
-```
-<img src="https://github.com/user-attachments/assets/09d9938d-8734-4b65-88dc-041164d6a17b" width="200" height="200" />
-
-## Use `PyTorch` for playground experiment
-
-### Command
-```
-model.py [-h] [--type TYPE] [--layer-sizes LAYER_SIZES [LAYER_SIZES ...]] [--activation ACTIVATION] [--batch-size BATCH_SIZE] [--plot-loss] [--plot-data]
-                [--epochs EPOCHS] [--use-pretrained USE_PRETRAINED] [--save-weight] [--lr LR] [--loss LOSS] [--split SPLIT]
+cmake --build . --target clean; make;
 ```
 
-### Example
-Use a neural network with:
-- 3 hidden layers with 6, 2, 2 neurons respectively
-- 150 epochs training
-- batch size 10
-- plot the decision boundary/area
-- save weights in a cross compatible format (works with `pyTorch` and `DL-CPP`)
-
+`Autodiff` Tests
 ```
-python3 model.py --layer-sizes 2 6 2 2 1  --batch-size 10 --epochs 150 --type xor --plot-data
+cd units/autodiff/tests && cmake --build . --target clean; make; cd ../../../
 ```
-Before Training:
 
-<img src="https://github.com/user-attachments/assets/864afa89-931d-418b-9c4a-029bba22b695" width="200" height="200" />
-
-After Training:
-
-<img src="https://github.com/user-attachments/assets/74de2d06-d58a-45e7-a896-06acf2f3590a" width="200" height="200" />
-
-## Use `DL-CPP` for playground experiment
-
-Use example config files available at [Config](./config)
-
-### Command
+### Run
+`DL-CPP` Suggested run command
 ```
-./dl_cpp <config_file>
+./dl_cpp <cfg> > log 2> debug
 ```
+
+`Autodiff` Tests
+`./units/autodiff/tests/test_autodiff`

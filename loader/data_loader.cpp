@@ -82,3 +82,39 @@ vector<pair<pair<float, float>, int>> PlaygroundDataLoader::get_batch(int index)
 
     return batch;
 }
+
+double PlaygroundDataLoader::test(Model* model){
+    double correct = 0;
+    double total = 0;
+
+    for(int i = 0; i < indices.size(); i++){
+        vector<pair<pair<float, float>, int>> batch = get_batch(i);
+
+        for(int j = 0; j < batch.size(); j++){
+            auto data = batch[j];
+
+            model->input[0]->value = data.first.first;
+            model->input[1]->value = data.first.second;
+
+            LOG_DEBUG("Data: %f, %f", data.first.first, data.first.second);
+            LOG_DEBUG("Label: %d", data.second);
+
+            model->target[0]->value = data.second;
+            model->forward();
+
+            cout << "Loss: " << model->get_loss() << endl;
+
+            int predicted = model->output[0]->value > 0 ? 1 : -1;
+
+            LOG_DEBUG("Activation: %f", model->output[0]->value);
+            LOG_DEBUG("Predicted: %d", predicted);
+            LOG_DEBUG("Correct: %d", data.second);
+            if(predicted == data.second){
+                correct++;
+            }
+            total++;
+        }
+    }
+
+    return correct / total;
+}
