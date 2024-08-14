@@ -25,7 +25,7 @@ stack<Node*> ComputationalGraph::topological_sort(direction dir) {
 void ComputationalGraph::topological_sort_helper(Node* node, unordered_set<Node*>& visited, stack<Node*>& sortedNodes, direction dir) {
     visited.insert(node);
 
-    if(dir == FORWARD) {
+    if(dir == BACKWARD) {
         for(auto it = node->children.begin(); it != node->children.end(); it++) {
             if(visited.count(*it) == 0) {
                 topological_sort_helper(*it, visited, sortedNodes, dir);

@@ -40,12 +40,12 @@ FCSegment::FCSegment(vector<Node*> &n1, vector<Node*> &n2, Node* activation, Com
     }
 
     // Set up the computational graph of the fully connected segment
-    for(int i = 0; i < n1.size(); i++){
+    for(int j = 0; j < n2.size(); j++){
 
         AddNode* add = new AddNode(0);
         graph->add_node(add);
 
-        for(int j = 0; j < n2.size(); j++){
+        for(int i = 0; i < n1.size(); i++){
             // w_ij * n1_i
             MulNode* mul = new MulNode(1);
             graph->add_node(mul);
@@ -55,14 +55,14 @@ FCSegment::FCSegment(vector<Node*> &n1, vector<Node*> &n2, Node* activation, Com
             graph->add_connection(add, mul);
         }
 
-        // + b_i
-        graph->add_connection(add, this->bias[i]);
+        // + b_j
+        graph->add_connection(add, this->bias[j]);
 
         // Apply activation function
         graph->add_node(activation);
         graph->add_connection(activation, add);
 
         // Populate n2 with the final layer (activation nodes)
-        n2[i] = activation;
+        n2[j] = activation;
     }
 }
