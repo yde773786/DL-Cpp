@@ -32,6 +32,9 @@ The major working parts that need to be puzzled together to design and create a 
 - `Config`: [CFG](/config/perceptron/perceptron_scalar.cfg)
 
 ### Build
+
+*Ensure libconfig++ and catch2 are installed in your system*
+
 `DL-CPP`
 ```
 cmake --build . --target clean; make;
