@@ -64,3 +64,9 @@ void ComputationalGraph::backward() {
         sortedNodes.pop();
     }
 }
+
+void ComputationalGraph::reset_grad() {
+    for(auto it = nodes.begin(); it != nodes.end(); it++) {
+        (*it)->gradient = 0;
+    }
+}

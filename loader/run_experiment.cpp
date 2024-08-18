@@ -16,7 +16,7 @@ unordered_map<string, Node*> ACTIVATION_FUNCTIONS = {
 };
 
 // Loss functions key-value pairs
-unordered_map<string, Node*> LOSS_FUNCTIONS = {
+unordered_map<string, LossNode*> LOSS_FUNCTIONS = {
     {"mse", new MSENode(0)}
 };
 
@@ -66,9 +66,14 @@ pair<DataLoaderBase*, DataLoaderBase*> get_data_loader_from_config(Setting& cfg,
         LOG_DEBUG("Creating data loader with split ratio: %f", split_ratio);
 
         split_ratio = dataset->length * split_ratio;
-        LOG_DEBUG("Train from: 0 to %f", split_ratio);
+        LOG_DEBUG("Train from: 1 to %f", split_ratio);
 
         for(int i = 0; i < dataset->length; i++){
+            // Skip the header
+            if(i == 0){
+                continue;
+            }
+
             if(i < split_ratio){
                 train_indices.push_back(i);
             }
@@ -162,6 +167,12 @@ int main(int argc, char **argv){
 
     if(weights_path == ""){
         // Train the model if not pre-trained
+        LOG_DEBUG("Training the model");
+
+        PlaygroundDataLoader * train_playground_data_loader = (PlaygroundDataLoader*) train_data_loader;
+        double accuracy = train_playground_data_loader->train(model);
+
+        cout << "Train Accuracy: " << accuracy << endl;
     }  
     else{
         // Load the weights
@@ -172,10 +183,12 @@ int main(int argc, char **argv){
     // Test the model
     if(dataset_type == "playground"){
 
+        LOG_DEBUG("Testing the model");
+
         PlaygroundDataLoader * test_playground_data_loader = (PlaygroundDataLoader*) test_data_loader;
         double accuracy = test_playground_data_loader->test(model);
 
-        cout << "Accuracy: " << accuracy << endl;
+        cout << "Test Accuracy: " << accuracy << endl;
     }
 
     return 0;

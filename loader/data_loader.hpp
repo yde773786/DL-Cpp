@@ -40,6 +40,7 @@ class DataLoader: public DataLoaderBase{
 
         virtual vector<pair<T,U>> get_batch(int index) = 0;
         virtual double test(Model* model) = 0;
+        virtual double train(Model* model) = 0;
 };
 
 // Define your custom DataLoader here
@@ -49,4 +50,5 @@ class PlaygroundDataLoader : public DataLoader<pair<float, float>, int>{
         PlaygroundDataLoader(PlaygroundDataset* dataset, int batch_size, vector<int> indices);
         vector<pair<pair<float, float>, int>> get_batch(int index) override;
         double test(Model* model) override;
+        double train(Model* model) override;
 };

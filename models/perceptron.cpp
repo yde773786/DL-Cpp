@@ -27,18 +27,15 @@ Perceptron::Perceptron(Node* activation, Node* loss, int input_size) : Model(los
 
     graph->add_connection(loss, output[0]);
     graph->add_connection(loss, target[0]);
+
+    ((LossNode*)loss)->add_output_target_pair(output[0], target[0]);
 }
 
 void Perceptron::forward(){
     graph->forward();
 }
 
-void Perceptron::backward(vector<double> target_val){
-
-    for(int i = 0; i < target_val.size(); i++){
-        target[i]->value = target_val[i];
-    }
-
+void Perceptron::backward(){
     graph->backward();
 }
 

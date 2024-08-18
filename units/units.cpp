@@ -1,5 +1,6 @@
 #include "units.hpp"
 #include <random>
+#include <time.h>
 
 #ifndef MACROLOGGER_H
 #define MACROLOGGER_H
@@ -16,6 +17,9 @@ FCSegment::FCSegment(vector<Node*> &n1, vector<Node*> &n2, Node* activation, Com
 
     LOG_DEBUG("n1 size: %ld", n1.size());
     LOG_DEBUG("n2 size: %ld", n2.size());
+
+    /* initialize random seed: */
+    srand ( time(NULL) );
 
     // Use He initialization for weights
     for(int i = 0; i < n1.size(); i++){
