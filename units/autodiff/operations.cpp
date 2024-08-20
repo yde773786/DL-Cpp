@@ -9,7 +9,7 @@ void AddNode::forward() {
 }
 
 void AddNode::backward(Node* child) {
-    child->gradient += 1;
+    child->gradient += 1 * this->gradient;
 };
 
 void MulNode::forward() {
@@ -20,7 +20,7 @@ void MulNode::forward() {
 }
 
 void MulNode::backward(Node* child) {
-    child->gradient += value / child->value;
+    child->gradient += (value / child->value) * this->gradient;
 };
 
 void ChildlessNode::forward() {

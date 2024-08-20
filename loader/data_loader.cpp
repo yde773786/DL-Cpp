@@ -157,7 +157,7 @@ double PlaygroundDataLoader::train(Model* model){
             total++;
 
             model->backward();
-            model->graph->reset_grad();
+            model->graph->apply_grad(model->learning_rate);
         }
     }
 

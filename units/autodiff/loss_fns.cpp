@@ -9,6 +9,7 @@
 // Children contain the output nodes and target nodes in order.
 // First half are output nodes, second half are target nodes.
 // [y'1, y'2, y'3, y'4... y'N, y1, y2, y3, y4... yN]
+// The loss is calculated as ((y'1 - y1)^2 + (y'2 - y2)^2 + ... + (y'N - yN)^2) / N
 void MSENode::forward(){
     double sum = 0;
     set<Node*>::iterator start_child = children.begin();
@@ -27,6 +28,7 @@ void MSENode::forward(){
 
 // If y'x : 2 * (y'x - yx) / N
 // If yx : 2 * (yx - y'x) / N
+// the gradient is calculated as 2 * (y'x - yx) / N (for output nodes)
 void MSENode::backward(Node* child){
     int vec_len = children.size() / 2;
 

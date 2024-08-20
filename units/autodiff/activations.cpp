@@ -7,7 +7,7 @@ void SigmoidNode::forward() {
 }
 
 void SigmoidNode::backward(Node* child) {
-    child->gradient += value * (1 - value);
+    child->gradient += (value * (1 - value)) * this->gradient;
 };
 
 void TanhNode::forward() {
@@ -16,7 +16,7 @@ void TanhNode::forward() {
 }
 
 void TanhNode::backward(Node* child) {
-    child->gradient += 1 - pow(value, 2);
+    child->gradient += (1 - pow(value, 2)) * this->gradient;
 };
 
 void ReLUNode::forward() {
@@ -25,5 +25,5 @@ void ReLUNode::forward() {
 }
 
 void ReLUNode::backward(Node* child) {
-    child->gradient += value > 0 ? 1 : 0;
+    child->gradient += (value > 0 ? 1 : 0) * this->gradient;
 };

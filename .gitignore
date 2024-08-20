@@ -14,7 +14,7 @@ playground/__pycache__/
 playground/*.wt
 
 # Autodiff output
-units/autodiff/tests/test_autodiff
+units/autodiff/tests/test_autodiff_exe
 
 *debug*
 *log*

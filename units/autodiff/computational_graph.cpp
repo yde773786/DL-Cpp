@@ -1,4 +1,8 @@
 #include "computational_graph.hpp"
+#ifndef MACROLOGGER_H
+#define MACROLOGGER_H
+#include <macrologger.h>
+#endif
 
 void ComputationalGraph::add_node(Node* node) {
     nodes.insert(node);
@@ -65,8 +69,9 @@ void ComputationalGraph::backward() {
     }
 }
 
-void ComputationalGraph::reset_grad() {
+void ComputationalGraph::apply_grad(double learning_rate) {
     for(auto it = nodes.begin(); it != nodes.end(); it++) {
+        (*it)->value -= (*it)->gradient * learning_rate;
         (*it)->gradient = 0;
     }
 }

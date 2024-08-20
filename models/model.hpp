@@ -13,6 +13,8 @@ public:
     Node* loss;
     ComputationalGraph* graph;
 
+    double learning_rate;
+
     Model(Node* loss) : loss(loss) {};
     
     double get_loss(){
@@ -30,7 +32,7 @@ class Perceptron : public Model
 {
     public:
     
-        Perceptron(Node* activation, Node* loss, int input_size);
+        Perceptron(Node* activation, Node* loss, int input_size, double learning_rate);
         void forward() override;
         void backward() override;
         void load_weights(string weights_path) override;

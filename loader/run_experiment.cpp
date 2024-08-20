@@ -26,10 +26,12 @@ using namespace libconfig;
 Model* get_model_from_config(Setting& hyp_cfg, Setting& des_cfg,string model_type, string vectorization){
     if(model_type == "perceptron"){
         string activation_function, loss_function;
+        double learning_rate;
         int input_size;
 
         hyp_cfg.lookupValue("activation", activation_function);
         hyp_cfg.lookupValue("loss", loss_function);
+        hyp_cfg.lookupValue("learning_rate", learning_rate);
 
         des_cfg.lookupValue("input_size", input_size);
 
@@ -38,7 +40,7 @@ Model* get_model_from_config(Setting& hyp_cfg, Setting& des_cfg,string model_typ
             return NULL;
         }
 
-        return new Perceptron(ACTIVATION_FUNCTIONS[activation_function], LOSS_FUNCTIONS[loss_function], input_size);
+        return new Perceptron(ACTIVATION_FUNCTIONS[activation_function], LOSS_FUNCTIONS[loss_function], input_size, learning_rate);
     }
     else{
         return NULL;

@@ -19,7 +19,7 @@ class ComputationalGraph {
 
         void forward();
         void backward();
-        void reset_grad();
+        void apply_grad(double learning_rate = 0.01);
 
     private:
         // topological sort of the graph. pop from the 

@@ -6,9 +6,10 @@
 #include <macrologger.h>
 #endif
 
-Perceptron::Perceptron(Node* activation, Node* loss, int input_size) : Model(loss){
+Perceptron::Perceptron(Node* activation, Node* loss, int input_size, double learning_rate) : Model(loss){
 
     graph = new ComputationalGraph();
+    this->learning_rate = learning_rate;
 
     for (int i = 0; i < input_size; i++){
         input.push_back(new ChildlessNode(0));
