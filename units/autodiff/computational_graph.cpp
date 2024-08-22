@@ -69,9 +69,16 @@ void ComputationalGraph::backward() {
     }
 }
 
-void ComputationalGraph::apply_grad(double learning_rate) {
+void ComputationalGraph::save_grad() {
     for(auto it = nodes.begin(); it != nodes.end(); it++) {
-        (*it)->value -= (*it)->gradient * learning_rate;
+        (*it)->apply_grad += (*it)->gradient;
         (*it)->gradient = 0;
+    }
+}
+
+void ComputationalGraph::apply_grad(double batch_size, double learning_rate = 0.01) {
+    for(auto it = nodes.begin(); it != nodes.end(); it++) {
+        (*it)->value -= learning_rate * ((*it)->apply_grad / batch_size);
+        (*it)->apply_grad = 0;
     }
 }
