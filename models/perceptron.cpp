@@ -6,7 +6,7 @@
 #include <macrologger.h>
 #endif
 
-Perceptron::Perceptron(Node* activation, Node* loss, int input_size, double learning_rate) : Model(loss){
+Perceptron::Perceptron(Node* activation, LossNode* loss, int input_size, double learning_rate) : Model(loss){
 
     graph = new ComputationalGraph();
     this->learning_rate = learning_rate;
@@ -29,7 +29,7 @@ Perceptron::Perceptron(Node* activation, Node* loss, int input_size, double lear
     graph->add_connection(loss, output[0]);
     graph->add_connection(loss, target[0]);
 
-    ((LossNode*)loss)->add_output_target_pair(output[0], target[0]);
+    loss->add_output_target_pair(output[0], target[0]);
 }
 
 void Perceptron::forward(){

@@ -146,11 +146,6 @@ double PlaygroundDataLoader::train(Model* model){
             LOG_DEBUG("Predicted: %d", predicted);
             LOG_DEBUG("Correct: %d", data.second);
 
-            FCSegment* s1 = ((Perceptron*) model)->s1;
-            LOG_DEBUG("Weight: %f", s1->weights[0][0]->value);
-            LOG_DEBUG("Weight: %f", s1->weights[1][0]->value);
-            LOG_DEBUG("Bias: %f", s1->bias[0]->value);
-
             if(predicted == data.second){
                 correct++;
             }

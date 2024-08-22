@@ -22,6 +22,7 @@ add_subdirectory(units/autodiff)
 # Specify the source files for the executable
 set(SOURCES
     models/model.hpp
+    models/mlp.cpp
     models/perceptron.cpp
     units/units.cpp
     units/units.hpp

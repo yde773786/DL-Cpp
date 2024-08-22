@@ -32,10 +32,32 @@ class Perceptron : public Model
 {
     public:
     
-        Perceptron(Node* activation, Node* loss, int input_size, double learning_rate);
+        Perceptron(Node* activation, LossNode* loss, int input_size, double learning_rate);
         void forward() override;
         void backward() override;
         void load_weights(string weights_path) override;
 
         FCSegment* s1;
+};
+
+struct MLPUnit
+{
+    int input_size;
+    int output_size;
+    Node* activation;
+};
+
+class MLP : public Model
+{
+    public:
+    
+        MLP(LossNode* loss, vector<MLPUnit> mlp_unit, double learning_rate);
+        void forward() override;
+        void backward() override;
+        void load_weights(string weights_path) override;
+
+        vector<FCSegment*> segments;
+
+    private:
+        vector<vector<Node*>> hidden_layers;
 };

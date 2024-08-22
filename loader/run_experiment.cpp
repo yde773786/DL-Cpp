@@ -42,6 +42,40 @@ Model* get_model_from_config(Setting& hyp_cfg, Setting& des_cfg,string model_typ
 
         return new Perceptron(ACTIVATION_FUNCTIONS[activation_function], LOSS_FUNCTIONS[loss_function], input_size, learning_rate);
     }
+    else if(model_type == "mlp"){
+        vector<MLPUnit> mlp_units;
+        double learning_rate;
+        string loss_function;
+
+        hyp_cfg.lookupValue("learning_rate", learning_rate);
+        hyp_cfg.lookupValue("loss", loss_function);
+
+        int num_layers = des_cfg.getLength();
+
+        for(int i = 0; i < num_layers; i++){
+            Setting &layer = des_cfg[i];
+            int input_size, output_size;
+            string activation;
+
+            layer.lookupValue("input_size", input_size);
+            layer.lookupValue("output_size", output_size);
+            layer.lookupValue("activation", activation);
+
+            if(ACTIVATION_FUNCTIONS.find(activation) == ACTIVATION_FUNCTIONS.end()){
+                cerr << "MLP cfg is invalid" << endl;
+                return NULL;
+            }
+
+            mlp_units.push_back({input_size, output_size, ACTIVATION_FUNCTIONS[activation]});
+        }
+
+        if(LOSS_FUNCTIONS.find(loss_function) == LOSS_FUNCTIONS.end()){
+            cerr << "MLP cfg is invalid" << endl;
+            return NULL;
+        }
+        
+        return new MLP(LOSS_FUNCTIONS[loss_function], mlp_units, learning_rate);
+    }
     else{
         return NULL;
     }
