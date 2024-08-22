@@ -9,6 +9,7 @@ class Node {
         double gradient;
         set<Node*> parents;
         set<Node*> children;
+        double apply_grad = 0;
 
         Node(double value) : value(value), gradient(0), parents(set<Node*>()), children(set<Node*>()) {}
 

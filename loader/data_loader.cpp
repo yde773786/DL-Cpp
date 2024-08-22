@@ -88,6 +88,7 @@ double PlaygroundDataLoader::test(Model* model){
     double total = 0;
 
     for(int i = 0; i < indices.size(); i++){
+        LOG_DEBUG("Testing on batch: %d", i);
         vector<pair<pair<float, float>, int>> batch = get_batch(i);
 
         for(int j = 0; j < batch.size(); j++){
@@ -123,8 +124,11 @@ double PlaygroundDataLoader::train(Model* model){
     double correct = 0;
     double total = 0;
 
-    for(int i = 0; i < indices.size(); i++){
+    int num_batches = indices.size() / batch_size;
+
+    for(int i = 0; i < num_batches; i++){
         vector<pair<pair<float, float>, int>> batch = get_batch(i);
+        LOG_DEBUG("Training on batch: %d", i);
 
         for(int j = 0; j < batch.size(); j++){
             auto data = batch[j];
@@ -157,8 +161,10 @@ double PlaygroundDataLoader::train(Model* model){
             total++;
 
             model->backward();
-            model->graph->apply_grad(model->learning_rate);
+            model->graph->save_grad();
         }
+
+        model->graph->apply_grad(this->batch_size, model->learning_rate);
     }
 
     return correct / total;
