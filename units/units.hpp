@@ -7,6 +7,10 @@
 #include <autodiff/loss_fns.hpp>
 #include <string>
 
+extern std::unordered_map<std::string, std::function<Node*()>> ACTIVATION_FUNCTIONS;
+
+extern std::unordered_map<std::string, std::function<LossNode*()>> LOSS_FUNCTIONS;
+
 using namespace std;
 
 // Represents a Fully Connected Segment between two layers of neurons
@@ -20,8 +24,5 @@ class FCSegment{
         vector<ChildlessNode*> bias; // Bias for each neuron in the second layer
         vector<vector<ChildlessNode*>> weights; // Weights between the two layers
 
-        Node* activation;
-        Node* loss;
-
-        FCSegment(vector<Node*> &n1, vector<Node*> &n2, Node* activation, ComputationalGraph* graph);
+        FCSegment(vector<Node*> &n1, vector<Node*> &n2, string activation, ComputationalGraph* graph);
 };

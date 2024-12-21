@@ -1,4 +1,5 @@
 #include <vector>
+#include <functional>
 #include <iostream>
 #include "../units/units.hpp"
 
@@ -10,13 +11,15 @@ public:
     vector<Node*> output;
     vector<Node*> target;
 
-    Node* loss;
+    LossNode * loss;
     ComputationalGraph* graph;
 
     double learning_rate;
 
-    Model(Node* loss) : loss(loss) {};
-    
+    Model(){
+        this->loss = NULL;
+    }
+
     double get_loss(){
         return loss->value;
     }
@@ -32,7 +35,7 @@ class Perceptron : public Model
 {
     public:
     
-        Perceptron(Node* activation, LossNode* loss, int input_size, double learning_rate);
+        Perceptron(string activation, string loss, int input_size, double learning_rate);
         void forward() override;
         void backward() override;
         void load_weights(string weights_path) override;
@@ -44,14 +47,14 @@ struct MLPUnit
 {
     int input_size;
     int output_size;
-    Node* activation;
+    string activation;
 };
 
 class MLP : public Model
 {
     public:
     
-        MLP(LossNode* loss, vector<MLPUnit> mlp_unit, double learning_rate);
+        MLP(string loss, vector<MLPUnit> mlp_unit, double learning_rate);
         void forward() override;
         void backward() override;
         void load_weights(string weights_path) override;

@@ -7,7 +7,7 @@
 #include <macrologger.h>
 #endif
 
-MLP::MLP(LossNode* loss, vector<MLPUnit> mlp_unit, double learning_rate) : Model(loss){
+MLP::MLP(string loss_str, vector<MLPUnit> mlp_unit, double learning_rate){
     
     graph = new ComputationalGraph();
     this->learning_rate = learning_rate;
@@ -19,6 +19,7 @@ MLP::MLP(LossNode* loss, vector<MLPUnit> mlp_unit, double learning_rate) : Model
 
     for (int i = 0; i < mlp_unit[0].input_size; i++){
         input.push_back(new ChildlessNode(0));
+        input[i]->set_id("Input " + to_string(i));
         graph->add_node(input[i]);
     }
 
@@ -26,7 +27,7 @@ MLP::MLP(LossNode* loss, vector<MLPUnit> mlp_unit, double learning_rate) : Model
     segments.push_back(new FCSegment(input, hidden_layer, mlp_unit[0].activation, graph));
     hidden_layers.push_back(hidden_layer);
 
-    for(int i = 1; i < mlp_unit.size() - 1; i++){
+    for(int i = 1; i < mlp_unit.size(); i++){
         vector<Node*> hidden_layer(mlp_unit[i].output_size, NULL);
         segments.push_back(new FCSegment(hidden_layers[i-1], hidden_layer, mlp_unit[i].activation, graph));
         hidden_layers.push_back(hidden_layer);
@@ -34,6 +35,9 @@ MLP::MLP(LossNode* loss, vector<MLPUnit> mlp_unit, double learning_rate) : Model
 
     output = hidden_layers.back();
     hidden_layers.pop_back();
+
+    LossNode * loss = LOSS_FUNCTIONS[loss_str]();
+    this->loss = loss;
 
     for (int i = 0; i < mlp_unit.back().output_size; i++){
         target.push_back(new ChildlessNode(0));
@@ -60,15 +64,14 @@ void MLP::load_weights(string weights_path){
         for(int j = 0; j < segments[i]->weights.size(); j++){
             for(int k = 0; k < segments[i]->weights[j].size(); k++){
                 weights_file.read((char*)&segments[i]->weights[j][k]->value, sizeof(double));
-                LOG_DEBUG("Weight: %f", segments[i]->weights[j][k]->value);
+                LOG_DEBUG("Weight: Layer %i, i %i, j %i: %f", i + 1, j + 1, k + 1 ,segments[i]->weights[j][k]->value);
             }
+        }
+
+        for(int j = 0; j < segments[i]->bias.size(); j++){
+          weights_file.read((char*)&segments[i]->bias[j]->value, sizeof(double));
+          LOG_DEBUG("Bias: Layer %i, i %i: %f", i + 1, j + 1, segments[i]->bias[j]->value);
         }
     }
 
-    for(int i = 0; i < segments.size(); i++){
-        for(int j = 0; j < segments[i]->bias.size(); j++){
-            weights_file.read((char*)&segments[i]->bias[j]->value, sizeof(double));
-            LOG_DEBUG("Bias: %f", segments[i]->bias[j]->value);
-        }
-    }
 }

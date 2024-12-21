@@ -6,6 +6,8 @@ void AddNode::forward() {
     for(auto it = this->children.begin(); it != this->children.end(); it++) {
         this->value += (*it)->value;
     }
+
+    LOG_DEBUG("AddNode::forward() value: %f, term:%s", this->value, this->id.c_str());
 }
 
 void AddNode::backward(Node* child) {
@@ -17,6 +19,8 @@ void MulNode::forward() {
     for(auto it = this->children.begin(); it != this->children.end(); it++) {
         this->value *= (*it)->value;
     }
+
+    LOG_DEBUG("MulNode::forward() value: %f, term:%s", this->value, this->id.c_str());
 }
 
 void MulNode::backward(Node* child) {
@@ -25,6 +29,7 @@ void MulNode::backward(Node* child) {
 
 void ChildlessNode::forward() {
     // do nothing
+    LOG_DEBUG("ChildlessNode::forward() value: %f, term:%s", this->value, this->id.c_str());
 }
 
 void ChildlessNode::backward(Node* child) {

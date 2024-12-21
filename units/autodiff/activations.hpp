@@ -1,4 +1,5 @@
 #include "node.hpp"
+#include <functional>
 
 class SigmoidNode : public Node {
     public:

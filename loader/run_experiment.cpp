@@ -8,16 +8,14 @@
 #include <macrologger.h>
 #endif
 
-// Activation functions key-value pairs
-unordered_map<string, Node*> ACTIVATION_FUNCTIONS = {
-    {"sigmoid", new SigmoidNode(0)},
-    {"ReLU", new ReLUNode(0)},
-    {"tanh", new TanhNode(0)}
+// Set of activations
+std::unordered_set<std::string> ACTIVATION_SET= {
+    "relu", "sigmoid", "tanh",
 };
 
-// Loss functions key-value pairs
-unordered_map<string, LossNode*> LOSS_FUNCTIONS = {
-    {"mse", new MSENode(0)}
+// Set of loss functions
+std::unordered_set<std::string> LOSS_SET = {
+    "mse",
 };
 
 
@@ -35,12 +33,12 @@ Model* get_model_from_config(Setting& hyp_cfg, Setting& des_cfg,string model_typ
 
         des_cfg.lookupValue("input_size", input_size);
 
-        if(ACTIVATION_FUNCTIONS.find(activation_function) == ACTIVATION_FUNCTIONS.end() || LOSS_FUNCTIONS.find(loss_function) == LOSS_FUNCTIONS.end()){
+        if(ACTIVATION_SET.find(activation_function) == ACTIVATION_SET.end() || LOSS_SET.find(loss_function) == LOSS_SET.end()){
             cerr << "Perceptron cfg is invalid" << endl;
             return NULL;
         }
 
-        return new Perceptron(ACTIVATION_FUNCTIONS[activation_function], LOSS_FUNCTIONS[loss_function], input_size, learning_rate);
+        return new Perceptron(activation_function, loss_function, input_size, learning_rate);
     }
     else if(model_type == "mlp"){
         vector<MLPUnit> mlp_units;
@@ -61,20 +59,20 @@ Model* get_model_from_config(Setting& hyp_cfg, Setting& des_cfg,string model_typ
             layer.lookupValue("output_size", output_size);
             layer.lookupValue("activation", activation);
 
-            if(ACTIVATION_FUNCTIONS.find(activation) == ACTIVATION_FUNCTIONS.end()){
+            if(ACTIVATION_SET.find(activation) == ACTIVATION_SET.end()){
                 cerr << "MLP cfg is invalid" << endl;
                 return NULL;
             }
 
-            mlp_units.push_back({input_size, output_size, ACTIVATION_FUNCTIONS[activation]});
+            mlp_units.push_back({input_size, output_size, activation});
         }
 
-        if(LOSS_FUNCTIONS.find(loss_function) == LOSS_FUNCTIONS.end()){
+        if(LOSS_SET.find(loss_function) == LOSS_SET.end()){
             cerr << "MLP cfg is invalid" << endl;
             return NULL;
         }
         
-        return new MLP(LOSS_FUNCTIONS[loss_function], mlp_units, learning_rate);
+        return new MLP(loss_function, mlp_units, learning_rate);
     }
     else{
         return NULL;

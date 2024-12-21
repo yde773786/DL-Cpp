@@ -1,6 +1,13 @@
 #include <set>
 #pragma once
 
+#include <string>
+
+#ifndef MACROLOGGER_H
+#define MACROLOGGER_H
+#include <macrologger.h>
+#endif
+
 using namespace std;
 
 class Node {
@@ -10,8 +17,13 @@ class Node {
         set<Node*> parents;
         set<Node*> children;
         double apply_grad = 0;
+        string id = "";
 
         Node(double value) : value(value), gradient(0), parents(set<Node*>()), children(set<Node*>()) {}
+
+        void set_id(string id) {
+            this->id = id;
+        }
 
         void add_parent(Node* parent) {
             this->parents.insert(parent);

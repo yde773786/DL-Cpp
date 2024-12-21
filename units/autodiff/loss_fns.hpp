@@ -1,6 +1,7 @@
 #include "node.hpp"
 #include <unordered_map>
 #include <tuple>
+#include <functional>
 
 class LossNode : public Node {
     public:

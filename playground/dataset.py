@@ -14,6 +14,7 @@ import math
 
 STANDARD_DEVIATION = 0.707
 
+
 def classify_two_gauss_data(num_samples):
     data = []
 
@@ -29,6 +30,7 @@ def classify_two_gauss_data(num_samples):
     generate_gauss(-2, STANDARD_DEVIATION, -1)
 
     return data
+
 
 def classify_spiral_data(num_samples):
     data = []
@@ -57,9 +59,9 @@ def classify_circle_data(num_samples):
     def generate_circle_label(p, center):
         dx = p[0] - center[0]
         dy = p[1] - center[1]
-        
+
         return 1 if dx ** 2 + dy ** 2 < ((radius * 0.5) ** 2) else -1
-    
+
     # Positive points
     for _ in range(num_samples // 2):
         r = random.uniform(0, radius * 0.5)
@@ -82,16 +84,17 @@ def classify_circle_data(num_samples):
 
     return data
 
+
 def classify_xor_data(num_samples):
     data = []
 
     def generate_xor_label(p):
         return 1 if p[0] * p[1] >= 0 else -1
-    
+
     for i in range(num_samples):
         x = random.uniform(-5, 5)
         padding = 0.3
-        
+
         if x > 0:
             x += padding
         else:
