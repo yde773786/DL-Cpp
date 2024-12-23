@@ -126,40 +126,52 @@ double PlaygroundDataLoader::train(Model* model){
 
     int num_batches = indices.size() / batch_size;
 
-    for(int i = 0; i < num_batches; i++){
-        vector<pair<pair<float, float>, int>> batch = get_batch(i);
-        LOG_DEBUG("Training on batch: %d", i);
+    // TODO: Make this a hyperparameter
+    int epochs = 50;
 
-        for(int j = 0; j < batch.size(); j++){
-            auto data = batch[j];
+    for(int epoch = 0; epoch < epochs; epoch++){
 
-            model->input[0]->value = data.first.first;
-            model->input[1]->value = data.first.second;
+        for(int i = 0; i < num_batches; i++){
+            vector<pair<pair<float, float>, int>> batch = get_batch(i);
+            LOG_DEBUG("Training on batch: %d", i);
 
-            LOG_DEBUG("Data: %f, %f", data.first.first, data.first.second);
-            LOG_DEBUG("Label: %d", data.second);
+            model->log_weights();
 
-            model->target[0]->value = data.second;
-            model->forward();
+            for(int j = 0; j < batch.size(); j++){
+                auto data = batch[j];
 
-            cout << "Loss: " << model->get_loss() << endl;
+                model->input[0]->value = data.first.first;
+                model->input[1]->value = data.first.second;
 
-            int predicted = model->output[0]->value > 0 ? 1 : -1;
+                LOG_DEBUG("Data: %f, %f", data.first.first, data.first.second);
+                LOG_DEBUG("Label: %d", data.second);
 
-            LOG_DEBUG("Activation: %f", model->output[0]->value);
-            LOG_DEBUG("Predicted: %d", predicted);
-            LOG_DEBUG("Correct: %d", data.second);
+                model->target[0]->value = data.second;
+                model->forward();
 
-            if(predicted == data.second){
-                correct++;
+                cout << "Loss: " << model->get_loss() << endl;
+
+                int predicted = model->output[0]->value > 0 ? 1 : -1;
+
+                LOG_DEBUG("Activation: %f", model->output[0]->value);
+                LOG_DEBUG("Predicted: %d", predicted);
+                LOG_DEBUG("Correct: %d", data.second);
+
+                if(predicted == data.second){
+                    correct++;
+                }
+                total++;
+
+                model->backward();
+                model->graph->save_grad();
             }
-            total++;
 
-            model->backward();
-            model->graph->save_grad();
+            model->log_weights();
+            model->graph->apply_grad(this->batch_size, model->learning_rate);
         }
 
-        model->graph->apply_grad(this->batch_size, model->learning_rate);
+        cout << "Epoch: " << epoch << endl;
+
     }
 
     return correct / total;

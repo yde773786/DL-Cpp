@@ -38,6 +38,7 @@ MLP::MLP(string loss_str, vector<MLPUnit> mlp_unit, double learning_rate){
 
     LossNode * loss = LOSS_FUNCTIONS[loss_str]();
     this->loss = loss;
+    graph->add_node(loss);
 
     for (int i = 0; i < mlp_unit.back().output_size; i++){
         target.push_back(new ChildlessNode(0));
@@ -53,6 +54,7 @@ void MLP::forward(){
 }
 
 void MLP::backward(){
+    loss->gradient = 1;
     graph->backward();
 }
 
@@ -74,4 +76,20 @@ void MLP::load_weights(string weights_path){
         }
     }
 
+}
+
+void MLP::log_weights(){
+    for(int i = 0; i < segments.size(); i++){
+        for(int j = 0; j < segments[i]->weights.size(); j++){
+            for(int k = 0; k < segments[i]->weights[j].size(); k++){
+                LOG_DEBUG("%s Value: %f, Gradient: %f", segments[i]->weights[j][k]->id.c_str(),
+                          segments[i]->weights[j][k]->value, segments[i]->weights[j][k]->apply_grad);
+            }
+        }
+
+        for(int j = 0; j < segments[i]->bias.size(); j++){
+          LOG_DEBUG("%s Value: %f, Gradient %f", segments[i]->bias[j]->id.c_str(),
+                    segments[i]->bias[j]->value, segments[i]->bias[j]->apply_grad);
+        }
+    }
 }

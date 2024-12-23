@@ -13,7 +13,6 @@ void SigmoidNode::backward(Node* child) {
 void TanhNode::forward() {
     auto child = *this->children.begin();
     this->value = tanh(child->value);
-    LOG_DEBUG("TanhNode::forward() value: %f, term:%s", this->value, this->id.c_str());
 }
 
 void TanhNode::backward(Node* child) {

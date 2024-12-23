@@ -27,6 +27,9 @@ public:
     virtual void forward() = 0;
     virtual void load_weights(string weights_path) = 0;
     virtual void backward() = 0;
+
+    // Logging
+    virtual void log_weights() = 0;
 };
 
 // Out-of-the-box models
@@ -39,6 +42,7 @@ class Perceptron : public Model
         void forward() override;
         void backward() override;
         void load_weights(string weights_path) override;
+        void log_weights() override;
 
         FCSegment* s1;
 };
@@ -58,6 +62,7 @@ class MLP : public Model
         void forward() override;
         void backward() override;
         void load_weights(string weights_path) override;
+        void log_weights() override;
 
         vector<FCSegment*> segments;
 

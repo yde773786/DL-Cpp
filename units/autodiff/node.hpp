@@ -17,6 +17,8 @@ class Node {
         set<Node*> parents;
         set<Node*> children;
         double apply_grad = 0;
+
+        // id is used for debugging purposes
         string id = "";
 
         Node(double value) : value(value), gradient(0), parents(set<Node*>()), children(set<Node*>()) {}

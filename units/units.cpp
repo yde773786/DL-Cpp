@@ -63,7 +63,7 @@ FCSegment::FCSegment(vector<Node*> &n1, vector<Node*> &n2, string activation_str
     for(int i = 0; i < n2.size(); i++){
 
         AddNode* add = new AddNode(0);
-        add->set_id("Layer " + to_string(GLOBAL_INCREMENT + 1) + " Node " + to_string(i + 1));
+        add->set_id("Layer " + to_string(GLOBAL_INCREMENT + 1) + " Z " + to_string(i + 1));
         graph->add_node(add);
 
         for(int j = 0; j < n1.size(); j++){
@@ -81,7 +81,7 @@ FCSegment::FCSegment(vector<Node*> &n1, vector<Node*> &n2, string activation_str
         graph->add_connection(add, this->bias[i]);
 
         Node* activation = ACTIVATION_FUNCTIONS[activation_str]();
-        activation->set_id("Layer " + to_string(GLOBAL_INCREMENT) + " Activation " + to_string(i + 1));
+        activation->set_id("Layer " + to_string(GLOBAL_INCREMENT + 1) + " A " + to_string(i + 1));
 
         graph->add_node(activation);
         graph->add_connection(activation, add);

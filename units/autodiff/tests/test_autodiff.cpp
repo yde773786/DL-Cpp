@@ -9,7 +9,7 @@ TEST_CASE( "Single Arithmetic", "[arithmetic]" ) {
     ComputationalGraph graph;
     Node* a = new ChildlessNode(1);
     Node* b = new ChildlessNode(2);
-    Node* c = new AddNode(0);
+    Node* c = new MulNode(1);
     graph.add_node(a);
     graph.add_node(b);
     graph.add_node(c);
@@ -17,14 +17,14 @@ TEST_CASE( "Single Arithmetic", "[arithmetic]" ) {
     graph.add_connection(c, b);
 
     graph.forward();
-    REQUIRE( c->value == 3 );
+    REQUIRE( c->value == 2 );
     REQUIRE( a->value == 1 );
     REQUIRE( b->value == 2 );
 
     c->gradient = 2;
     graph.backward();
-    REQUIRE( a->gradient == 1 );
-    REQUIRE( b->gradient == 1 );
+    REQUIRE( a->gradient == 4 );
+    REQUIRE( b->gradient == 2 );
 }
 
 TEST_CASE( "Perceptron", "[dl]" ){

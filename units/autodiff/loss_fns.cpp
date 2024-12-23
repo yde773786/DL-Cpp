@@ -36,7 +36,7 @@ void MSENode::backward(Node* child){
     Node* output = output_target_pair[child].first;
 
     // sign will be 1 if the child is an output node, -1 if it is a target node
-    child->gradient += 2 * ((child->value - output->value) * sign) / vec_len;
+    child->gradient += 2 * ((child->value - output->value) * sign) * this->gradient / vec_len;
 }
 
 // y'x : yx

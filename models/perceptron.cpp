@@ -40,6 +40,7 @@ void Perceptron::forward(){
 }
 
 void Perceptron::backward(){
+    loss->gradient = 1;
     graph->backward();
 }
 
@@ -57,4 +58,14 @@ void Perceptron::load_weights(string weights_path){
 
     weights_file.read((char*)&s1->bias[0]->value, sizeof(double));
     LOG_DEBUG("Bias: %f", s1->bias[0]->value);
+}
+
+void Perceptron::log_weights(){
+    for(int i = 0; i < input.size(); i++){
+        LOG_DEBUG("%s Value: %f, Gradient: %f", s1->weights[i][0]->id.c_str(),
+                  s1->weights[i][0]->value, s1->weights[i][0]->apply_grad);
+    }
+
+    LOG_DEBUG("%s Value: %f, Gradient: %f", s1->bias[0]->id.c_str(),
+              s1->bias[0]->value, s1->bias[0]->apply_grad);
 }
