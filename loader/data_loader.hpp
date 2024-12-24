@@ -37,6 +37,7 @@ class DataLoader: public DataLoaderBase{
     public:
         vector<int> indices;
         Dataset<T, U>* dataset;
+        int epochs;
 
         virtual vector<pair<T,U>> get_batch(int index) = 0;
         virtual double test(Model* model) = 0;
@@ -47,7 +48,7 @@ class DataLoader: public DataLoaderBase{
 
 class PlaygroundDataLoader : public DataLoader<pair<float, float>, int>{
     public:
-        PlaygroundDataLoader(PlaygroundDataset* dataset, int batch_size, vector<int> indices);
+        PlaygroundDataLoader(PlaygroundDataset* dataset, int batch_size, vector<int> indices, int epochs);
         vector<pair<pair<float, float>, int>> get_batch(int index) override;
         double test(Model* model) override;
         double train(Model* model) override;

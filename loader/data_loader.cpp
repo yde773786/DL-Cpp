@@ -64,10 +64,11 @@ pair<pair<float, float>, int> PlaygroundDataset::get_data(int index){
 
 // Define your custom DataLoader here
 
-PlaygroundDataLoader::PlaygroundDataLoader(PlaygroundDataset* dataset, int batch_size, vector<int> indices){
+PlaygroundDataLoader::PlaygroundDataLoader(PlaygroundDataset* dataset, int batch_size, vector<int> indices, int epochs){
     this->dataset = dataset;
     this->batch_size = batch_size;
     this->indices = indices;
+    this->epochs = epochs;
 }
 
 vector<pair<pair<float, float>, int>> PlaygroundDataLoader::get_batch(int index){
@@ -126,18 +127,15 @@ double PlaygroundDataLoader::train(Model* model){
 
     int num_batches = indices.size() / batch_size;
 
-    // TODO: Make this a hyperparameter
-    int epochs = 50;
-
     for(int epoch = 0; epoch < epochs; epoch++){
 
-        for(int i = 0; i < num_batches; i++){
-            vector<pair<pair<float, float>, int>> batch = get_batch(i);
+        for(int i = 0; i < num_batches; i++) {
+            vector<pair < pair < float, float>, int >> batch = get_batch(i);
             LOG_DEBUG("Training on batch: %d", i);
 
             model->log_weights();
 
-            for(int j = 0; j < batch.size(); j++){
+            for (int j = 0; j < batch.size(); j++) {
                 auto data = batch[j];
 
                 model->input[0]->value = data.first.first;
@@ -157,7 +155,7 @@ double PlaygroundDataLoader::train(Model* model){
                 LOG_DEBUG("Predicted: %d", predicted);
                 LOG_DEBUG("Correct: %d", data.second);
 
-                if(predicted == data.second){
+                if (predicted == data.second) {
                     correct++;
                 }
                 total++;
@@ -168,10 +166,9 @@ double PlaygroundDataLoader::train(Model* model){
 
             model->log_weights();
             model->graph->apply_grad(this->batch_size, model->learning_rate);
+
+            LOG_INFO("Epoch: %d, Batch: %d, Accuracy: %f", epoch, i, correct / total);
         }
-
-        cout << "Epoch: " << epoch << endl;
-
     }
 
     return correct / total;

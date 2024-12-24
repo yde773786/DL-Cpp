@@ -79,20 +79,26 @@ Model* get_model_from_config(Setting& hyp_cfg, Setting& des_cfg,string model_typ
     }
 }
 
-pair<DataLoaderBase*, DataLoaderBase*> get_data_loader_from_config(Setting& cfg, string dataset_type){
+pair<DataLoaderBase*, DataLoaderBase*> get_data_loader_from_config(Config& cfg, string dataset_type){
+    
+    Setting& dataset_cfg = cfg.getRoot()["dataset"];
+    int epochs;
+
+    cfg.getRoot()["train"].lookupValue("epochs", epochs);
+    
     if(dataset_type == "playground"){
         string data_path;
         int batch_size;
 
-        cfg.lookupValue("data_path", data_path);
+        dataset_cfg.lookupValue("data_path", data_path);
 
         PlaygroundDataset* dataset = new PlaygroundDataset(data_path);
-        cfg.lookupValue("data_path", data_path);
+        dataset_cfg.lookupValue("data_path", data_path);
 
         double split_ratio = 0;
-        cfg.lookupValue("split_ratio", split_ratio);
+        dataset_cfg.lookupValue("split_ratio", split_ratio);
 
-        cfg.lookupValue("batch_size", batch_size);
+        dataset_cfg.lookupValue("batch_size", batch_size);
 
         vector<int> train_indices;
         vector<int> test_indices;
@@ -119,7 +125,7 @@ pair<DataLoaderBase*, DataLoaderBase*> get_data_loader_from_config(Setting& cfg,
         LOG_DEBUG("Train indices size: %ld", train_indices.size());
         LOG_DEBUG("Test indices size: %ld", test_indices.size());
 
-        return {new PlaygroundDataLoader(dataset, batch_size, train_indices) , new PlaygroundDataLoader(dataset, 1, test_indices)};
+        return {new PlaygroundDataLoader(dataset, batch_size, train_indices, epochs) , new PlaygroundDataLoader(dataset, 1, test_indices, epochs)};
     }
     else{
         return {NULL, NULL};
@@ -171,7 +177,7 @@ int main(int argc, char **argv){
         vectorization = cfg.lookup("vectorization").c_str();
         dataset_type = cfg.lookup("dataset_type").c_str();
 
-        data_loader_pair = get_data_loader_from_config(cfg.getRoot()["dataset"], dataset_type);
+        data_loader_pair = get_data_loader_from_config(cfg, dataset_type);
         train_data_loader = data_loader_pair.first;
         test_data_loader = data_loader_pair.second;
 

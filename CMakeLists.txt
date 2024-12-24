@@ -42,4 +42,10 @@ target_link_libraries(dl_cpp macro-logger ${LIBCONFIG})
 # Link the autodiff library
 target_link_libraries(dl_cpp autodiff)
 
-target_compile_definitions(dl_cpp PRIVATE LOG_LEVEL=$ENV{LOG_LEVEL})
+if(NOT DEFINED ENV{LOG_LEVEL} OR "$ENV{LOG_LEVEL}" STREQUAL "")
+    set(DEFAULT_LOG_LEVEL 0x02) # Default to 0x02 (INFO_LEVEL)
+else()
+    set(DEFAULT_LOG_LEVEL $ENV{LOG_LEVEL})
+endif()
+
+target_compile_definitions(dl_cpp PRIVATE LOG_LEVEL=${DEFAULT_LOG_LEVEL})
