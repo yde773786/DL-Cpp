@@ -21,9 +21,22 @@ std::unordered_map<std::string, std::function<LossNode*()>> LOSS_FUNCTIONS = {
     {"mse", []() { return new MSENode(0); }},
 };
 
-FCSegment::FCSegment(vector<Node*> &n1, vector<Node*> &n2, string activation_str, ComputationalGraph* graph) : n1(n1), n2(n2){
-    this->bias = vector<ChildlessNode*>(n2.size());
-    this->weights = vector<vector<ChildlessNode*>>(n2.size(), vector<ChildlessNode*>(n1.size()));
+FCSegment::FCSegment(Node* n1, Node* n2, ComputationalGraph* graph){
+
+    // n1 is B x n1_dim
+    // n2 is B x n2_dim
+    // bias is n2_dim
+    // weights is n2_dim x n1_dim
+
+    int n1_dim = n1->shape[1];
+    int n2_dim = n2->shape[1];
+    int batch_size = n1->shape[0];
+
+    this->bias = ChildlessNode({n2_dim});
+    this->weights = ChildlessNode({n2_dim, n1_dim});
+
+    graph->add_node(this->bias);
+    graph->add_node(this->weights);
 
     // We assume that n1 is already connected to the computational graph
 
@@ -39,12 +52,9 @@ FCSegment::FCSegment(vector<Node*> &n1, vector<Node*> &n2, string activation_str
     for(int i = 0; i < n2.size(); i++){
         for(int j = 0; j < n1.size(); j++){
             double r = (rand() % 1000) / 1000.0;
-            
-            this->weights[i][j] = new ChildlessNode(sqrt(2.0 / n1.size()) * r);
-            this->weights[i][j]->set_id("Layer " + to_string(GLOBAL_INCREMENT) + " Weight " + to_string(i + 1) + " " + to_string(j + 1));
-            graph->add_node(this->weights[i][j]);
 
-            LOG_DEBUG("Weight: %f", this->weights[i][j]->value);
+            this->weights[i * n1.size() + j] = sqrt(2.0 / n1.size()) * r;
+            LOG_DEBUG("Weight: %f", this->weights[i * n1.size() + j]);
         }
     }
 
@@ -52,41 +62,23 @@ FCSegment::FCSegment(vector<Node*> &n1, vector<Node*> &n2, string activation_str
     for(int i = 0; i < n2.size(); i++){
         double r = (rand() % 1000) / 1000.0;
 
-        this->bias[i] = new ChildlessNode(sqrt(2.0 / n1.size()) * r);
-        this->bias[i]->set_id("Bias " + to_string(GLOBAL_INCREMENT) + " " + to_string(i + 1));
-        graph->add_node(this->bias[i]);
-
-        LOG_DEBUG("Bias: %f", this->bias[i]->value);
+        this->bias[i] = sqrt(2.0 / n1.size()) * r;
+        LOG_DEBUG("Bias: %f", this->bias[i]);
     }
 
     // Set up the computational graph of the fully connected segment
-    for(int i = 0; i < n2.size(); i++){
 
-        AddNode* add = new AddNode(0);
-        add->set_id("Layer " + to_string(GLOBAL_INCREMENT + 1) + " Z " + to_string(i + 1));
-        graph->add_node(add);
+    MatMulNode* matmul = new MatMulNode({batch_size, n2_dim});
+    graph->add_node(matmul);
+    graph->add_connection(matmul, n1);
+    graph->add_connection(matmul, this->weights);
 
-        for(int j = 0; j < n1.size(); j++){
-            // w_ij * n1_j
-            MulNode* mul = new MulNode(1);
-            mul->set_id("Layer " + to_string(GLOBAL_INCREMENT) + " W*H " + to_string(i + 1) + " " + to_string(j + 1));
-            graph->add_node(mul);
-            graph->add_connection(mul, n1[j]);
-            graph->add_connection(mul, this->weights[i][j]);
+    AddNode* add = new AddNode({batch_size, n2_dim});
+    graph->add_node(add);
+    graph->add_connection(add, matmul);
+    graph->add_connection(add, this->bias);
 
-            graph->add_connection(add, mul);
-        }
+    graph->add_node(n2);
+    graph->add_connection(n2, add);
 
-        // + b_i
-        graph->add_connection(add, this->bias[i]);
-
-        Node* activation = ACTIVATION_FUNCTIONS[activation_str]();
-        activation->set_id("Layer " + to_string(GLOBAL_INCREMENT + 1) + " A " + to_string(i + 1));
-
-        graph->add_node(activation);
-        graph->add_connection(activation, add);
-
-        // Populate n2 with the final layer (activation nodes)
-        n2[i] = activation;
-    }
 }

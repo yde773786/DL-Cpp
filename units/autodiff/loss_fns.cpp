@@ -11,37 +11,35 @@
 // [y'1, y'2, y'3, y'4... y'N, y1, y2, y3, y4... yN]
 // The loss is calculated as ((y'1 - y1)^2 + (y'2 - y2)^2 + ... + (y'N - yN)^2) / N
 void MSENode::forward(){
+    auto it = this->children.begin();
+    Node* output = *it;
+    it++;
+    Node* target = *it;
+
+    int vec_len = output->num_elements;
+
     double sum = 0;
-    set<Node*>::iterator start_child = children.begin();
-    set<Node*>::reverse_iterator end_child = children.rbegin();
-
-    int vec_len = children.size() / 2;
-
-    while(std::distance(start_child, end_child.base()) > 0){
-        sum += pow((*start_child)->value - (*end_child)->value, 2);
-        start_child++;
-        end_child++;
+    for(int i = 0; i < vec_len; i++){
+        sum += pow(output->value[i] - target->value[i], 2);
     }
 
-    value = sum / vec_len;
+    this->value[0] = sum / vec_len;
 }
 
 // If y'x : 2 * (y'x - yx) / N
 // If yx : 2 * (yx - y'x) / N
 // the gradient is calculated as 2 * (y'x - yx) / N (for output nodes)
+// grad wrt target not considered
 void MSENode::backward(Node* child){
-    int vec_len = children.size() / 2;
 
-    int sign = output_target_pair[child].second;
-    Node* output = output_target_pair[child].first;
+    auto it = this->children.begin();
+    Node* output = *it;
+    it++;
+    Node* target = *it;
 
-    // sign will be 1 if the child is an output node, -1 if it is a target node
-    child->gradient += 2 * ((child->value - output->value) * sign) * this->gradient / vec_len;
-}
+    int vec_len = output->num_elements;
 
-// y'x : yx
-// yx : y'x
-void MSENode::add_output_target_pair(Node* output, Node* target){
-    output_target_pair[output] = make_pair(target, 1);
-    output_target_pair[target] = make_pair(output, -1);
+    for(int i = 0; i < vec_len; i++){
+        output->gradient[i] += 2 * (output->value[i] - target->value[i]) / vec_len;
+    }
 }

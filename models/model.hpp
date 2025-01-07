@@ -7,9 +7,9 @@ class Model {
 
 public:
     
-    vector<Node*> input;
-    vector<Node*> output;
-    vector<Node*> target;
+    Node* input;
+    Node* output;
+    Node* target;
 
     LossNode * loss;
     ComputationalGraph* graph;

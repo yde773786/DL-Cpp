@@ -18,11 +18,11 @@ class FCSegment{
 
     public:
 
-        vector<Node*> &n1; // First layer of neurons
-        vector<Node*> &n2; // Second layer of neurons. This layer will be re-populated by FCSegment.
+        Node* n1; // First layer of neurons
+        Node* n2; // Second layer of neurons. This layer will be re-populated by FCSegment.
 
-        vector<ChildlessNode*> bias; // Bias for each neuron in the second layer
-        vector<vector<ChildlessNode*>> weights; // Weights between the two layers
+        ChildlessNode* bias; // Bias for each neuron in the second layer
+        ChildlessNode* weights; // Weights between the two layers
 
-        FCSegment(vector<Node*> &n1, vector<Node*> &n2, string activation, ComputationalGraph* graph);
+        FCSegment(Node* n1, Node* n2, ComputationalGraph* graph);
 };

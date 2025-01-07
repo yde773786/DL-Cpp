@@ -5,9 +5,6 @@
 
 class LossNode : public Node {
     public:
-        // Maps the output/target node to the pair of the other node and the sign (y - y' or y' - y)
-        unordered_map<Node*, pair<Node*, int>> output_target_pair;
-
         LossNode(double value) : Node(value) {}
 
         virtual void forward() = 0;
